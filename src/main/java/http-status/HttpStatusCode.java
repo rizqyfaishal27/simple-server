@@ -2,9 +2,10 @@ package httpstatus;
 
 public enum HttpStatusCode {
 
-	OK(200, "Success"),
-	NOT_FOUND(404, "Not found"),
-	NOT_IMPLEMENTED(501, "Not implemented"),
+	OK(200, "OK"),
+	FOUND(302, "Found"),
+	NOT_FOUND(404, "Not Found"),
+	NOT_IMPLEMENTED(501, "Not Implemented"),
 	BAD_REQUEST(400, "Bad Request");
 
 	private int code;

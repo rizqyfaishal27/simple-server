@@ -2,8 +2,8 @@ package utils;
 
 public class AppConfig {
 
-	static final String DIRECTORY_ROOT = "./served-directory";
-	static final String HTML_ROOT = "hello-world.html";
-	static final int DEFAULT_PORT = 12345;
+	public static final String DIRECTORY_ROOT = "./served-directory";
+	public static final String HTML_ROOT = "hello-world.html";
+	public static final int DEFAULT_PORT = 12345;
 
 }

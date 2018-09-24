@@ -10,24 +10,28 @@ import utils.HttpHeaderBuilder;
 import logger.Logger;
 
 
-public class BadRequestResponse extends Response {
+public class FoundResponse extends Response {
 
-	public BadRequestResponse(
+	private String location;
+
+	public FoundResponse(
+		String location,
 		byte[] returnedData,
 		HashMap<String, String> requestHeader,
 		BufferedOutputStream responseStream) {
-		super(HttpStatusCode.BAD_REQUEST, returnedData, requestHeader, responseStream);
+		super(HttpStatusCode.FOUND, returnedData, requestHeader, responseStream);
+		this.location = location;
 	}
 
 	public void send() throws IOException {
-		Logger.errorMessage("\"" + 
+		Logger.outputMessage("\"" + 
 			requestHeader.get("HTTP_METHOD")+ " " +
 			requestHeader.get("URL_RESOURCE") + " " + 
 			requestHeader.get("HTTP_VERSION")  +
-		"\" " + HttpStatusCode.BAD_REQUEST.getCode() + " " + returnedData.length);
+		"\" " + HttpStatusCode.FOUND.getCode() + " " + returnedData.length);
 
-		String header = HttpHeaderBuilder.generateHttpBadRequestHeader(requestHeader.get("HTTP_VERSION"),
-			returnedData.length);
+		String header = HttpHeaderBuilder.generateHttpFoundHeader(requestHeader.get("HTTP_VERSION"),
+			returnedData.length, location);
 		responseStream.write(header.getBytes());
 		responseStream.write(returnedData);
 		responseStream.flush();
