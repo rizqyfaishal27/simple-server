@@ -120,4 +120,22 @@ public class HttpHeaderBuilder {
 		sb.append("\r\n");
 		return sb.toString();
 	}
+
+	public static String generateHttpNotFoundHeader(String httpVersion, int contentLength) {
+		String commonHeader = HttpHeaderBuilder.generateCommonHeader();
+		HttpHeaderBuilder hb = new HttpHeaderBuilder();
+		hb.set("Content-Type", MimeTypes.PLAIN_TEXT.asText());
+		hb.set("Content-Length", String.valueOf(contentLength));
+		StringBuilder sb = new StringBuilder();
+		sb.append(httpVersion);
+		sb.append(" ");
+		sb.append(HttpStatusCode.NOT_FOUND.getCode());
+		sb.append(" ");
+		sb.append(HttpStatusCode.NOT_FOUND.getDescription());
+		sb.append("\r\n");
+		sb.append(commonHeader);
+		sb.append(hb.generateHeaderString());
+		sb.append("\r\n");
+		return sb.toString();
+	}
 }

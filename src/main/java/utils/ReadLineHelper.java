@@ -9,7 +9,7 @@ public class ReadLineHelper {
 	public static byte[] readLine(BufferedInputStream input) throws IOException {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
-		while(true) {
+		while(input.available() > 0) {
 			int data = input.read();
 			if(data == -1 || data == '\n') {
 				return buffer.toByteArray();
@@ -24,6 +24,8 @@ public class ReadLineHelper {
 				buffer.write(data);
 			}
 		}
+
+		return buffer.toByteArray();
 
 	}
 }

@@ -46,8 +46,12 @@ public abstract class Response {
 		this.responseStream = responseStream;
 	}
 
-	public void setResponseHeader(HashMap<String, String> requestHeader) {
+	public void setRequestHeader(HashMap<String, String> requestHeader) {
 		this.requestHeader = requestHeader;
+	}
+
+	public void setReturnedData(byte[] returnedData) {
+		this.returnedData = returnedData;
 	}
 
 

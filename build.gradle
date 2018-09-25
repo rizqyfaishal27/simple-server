@@ -40,4 +40,8 @@ run {
     if (project.hasProperty("port")) {
         args Eval.me(port)
     }
+
+    if (project.hasProperty("dir")) {
+        args Eval.me(dir);
+    }
 }

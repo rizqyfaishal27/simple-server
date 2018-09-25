@@ -5,12 +5,15 @@ import java.io.IOException;
 
 import logger.Logger;
 import server.ClientHandler;
+import router.Router;
 
 public class HttpServer {
 	private int port;
+	private Router router;
 
-	public HttpServer(int port) {
+	public HttpServer(int port, Router router) {
 		this.port = port;
+		this.router = router;
 	}
 
 	public void run() {
@@ -19,7 +22,7 @@ public class HttpServer {
 
 			while(true) {
 				Socket client = serverSocket.accept();
-				Thread clientThread = new Thread(new ClientHandler(client));
+				Thread clientThread = new Thread(new ClientHandler(client, router));
 				clientThread.start();
 			}
 		} catch (IOException error) {

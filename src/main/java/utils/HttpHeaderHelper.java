@@ -25,7 +25,7 @@ public class HttpHeaderHelper {
 			String[] temp = requestTextPerLine.split(" ");
 
 			if(temp.length < 3) {
-				throw new BadRequestException("Bad format");
+				throw new BadRequestException("Bad format 1");
 			}
 
 			headers.put("HTTP_METHOD", temp[0]);
@@ -40,24 +40,37 @@ public class HttpHeaderHelper {
 			}
 
 			requestByte = ReadLineHelper.readLine(request);
-			requestTextPerLine = new String(requestByte);
-			while(requestTextPerLine != null && !requestTextPerLine.equals("")) {
+			while(requestByte.length > 0) {
+				requestTextPerLine = new String(requestByte);
 				temp = requestTextPerLine.split(":");
-				if(temp.length != 2) {
-					throw new BadRequestException("Bad Format");
+				if(temp.length < 2) {
+					throw new BadRequestException("Bad Format 2");
+				} else if(temp.length > 2) {
+					for (int i = 2;i<temp.length;i++) {
+						temp[1] += temp[i];
+					}
 				}
 				String headerKey = temp[0].toUpperCase();
 				String headerValue = temp[1].trim();
 				headers.put(headerKey, headerValue);
 				requestByte = ReadLineHelper.readLine(request);
-				requestTextPerLine = new String(requestByte);
+			}
+			if(headers.containsKey("CONTENT-TYPE") && headers.get("CONTENT-TYPE").equals("application/x-www-form-urlencoded")) {
+				requestByte = ReadLineHelper.readLine(request);
+				if(requestByte.length > 0) {
+					requestTextPerLine = new String(requestByte);
+					String headerBody = requestTextPerLine;
+					headers.put("BODY", headerBody);
+				}
 			}
 			headers.put("IS_VALID", "true");
+			System.out.println(headers);
 		} catch(NotImplementedException error) {
 			headers.put("IS_VALID", "false");
 			headers.put("REASON", error.getMessage());
 			headers.put("STATUS_CODE", String.valueOf(HttpStatusCode.NOT_IMPLEMENTED.getCode()));
 		} catch(BadRequestException error) {
+			System.out.println(error.getMessage());
 			headers.put("IS_VALID", "false");
 			headers.put("REASON", error.getMessage());
 			headers.put("STATUS_CODE", String.valueOf(HttpStatusCode.BAD_REQUEST.getCode()));

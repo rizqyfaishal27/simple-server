@@ -11,18 +11,23 @@ import java.util.HashMap;
 import logger.Logger;
 import utils.HttpHeaderHelper;
 import httpstatus.HttpStatusCode;
+import router.Router;
 import response.Response;
 import response.NotImplementedResponse;
 import response.BadRequestResponse;
 import response.FoundResponse;
+import response.SuccessResponse;
+
 
 
 public class ClientHandler implements Runnable {
 
 	private Socket clientSocket;
+	private Router router;
 	
-	public ClientHandler(Socket clientSocket) {
+	public ClientHandler(Socket clientSocket, Router router) {
 		this.clientSocket = clientSocket;
+		this.router = router;
 	}
 
 	public void run() {
@@ -35,28 +40,32 @@ public class ClientHandler implements Runnable {
 			if(!isValid) {
 				String reason = "Reason: " + header.get("REASON");
 				int statusCode = Integer.parseInt(header.get("STATUS_CODE"));
-
+				String returnedData = null;
+				Response clientResponse = null;
 				switch(statusCode) {
-					case HttpStatusCode.NOT_IMPLEMENTED.getCode():
-						String returnedData = HttpStatusCode.NOT_IMPLEMENTED.getCode() + " " 
+					case 501:
+						returnedData = HttpStatusCode.NOT_IMPLEMENTED.getCode() + " " 
 							+ HttpStatusCode.NOT_IMPLEMENTED.getDescription() + ": " + reason + "\r\n";
-						NotImplementedResponse clientResponse = new NotImplementedResponse(returnedData.getBytes(), 
+						clientResponse = new NotImplementedResponse(returnedData.getBytes(), 
 							header, response);
 						clientResponse.send();
 						break;
-					case HttpStatusCode.BAD_REQUEST.getCode():
-						String returnedData = HttpStatusCode.BAD_REQUEST.getCode() + " " 
+					case 400:
+						returnedData = HttpStatusCode.BAD_REQUEST.getCode() + " " 
 							+ HttpStatusCode.BAD_REQUEST.getDescription() + "\r\n";
-						BadRequestResponse clientResponse = new BadRequestResponse(returnedData.getBytes(), header, response);
+						clientResponse = new BadRequestResponse(returnedData.getBytes(), header, response);
 						clientResponse.send();
 						break;
 				}
 			} else {
-				String url = header.get("URL_RESOURCE");
-				if(url.equals("/")) {
-					String returnedData = "";
-					String redirectedLocation = "/hello-world"
-					FoundResponse clientResponse = new FoundResponse(returnedData.getBytes(), header, response)
+				String urlResource = header.get("URL_RESOURCE");
+				String httpMethod = header.get("HTTP_METHOD");
+				
+				if(httpMethod.equals("GET")) {
+					String url = httpMethod + ":" + urlResource;
+					router.sendResponse(url, header, response);
+				} else if(httpMethod.equals("POST")) {
+					
 				}
 			}
 			request.close();
