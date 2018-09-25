@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Set;
+import java.net.SocketException;
+
 
 import httpstatus.HttpStatusCode;
 import response.Response;
@@ -54,7 +56,7 @@ public class SuccessResponse extends Response {
 
 			String header = HttpHeaderBuilder.generateHttpOkHeader(requestHeader.get("HTTP_VERSION"),
 				returnedData.length, mimeType);
-			responseStream.write(header.getBytes());
+			responseStream.write(header.getBytes("UTF-8"));
 			responseStream.write(returnedData);
 			responseStream.flush();
 			responseStream.close();
@@ -62,7 +64,6 @@ public class SuccessResponse extends Response {
 	}
 
 	public void sendLazy() throws IOException {
-		
 		
 		if(templateStrings == null) {
 			File file = new File(path);
@@ -83,7 +84,7 @@ public class SuccessResponse extends Response {
 					String key = it.next();
 					text = text.replaceAll(key, templateStrings.get(key));
 				}
-				setReturnedData(text.getBytes());
+				setReturnedData(text.getBytes("UTF-8"));
 			} else {
 				this.mimeType = MimeTypes.PLAIN_TEXT.asText();
 				Set<String> keys = templateStrings.keySet();
@@ -93,21 +94,25 @@ public class SuccessResponse extends Response {
 					String key = it.next();
 					text = text.replaceAll(key, templateStrings.get(key));
 				}
-				setReturnedData(text.getBytes());
+				setReturnedData(text.getBytes("UTF-8"));
 			}
 		}
-		Logger.outputMessage("\"" + 
-			requestHeader.get("HTTP_METHOD")+ " " +
-			requestHeader.get("URL_RESOURCE") + " " + 
-			requestHeader.get("HTTP_VERSION")  +
-		"\" " + HttpStatusCode.OK.getCode() + " " + returnedData.length);
-
-		String header = HttpHeaderBuilder.generateHttpOkHeader(requestHeader.get("HTTP_VERSION"),
+		try {
+			String header = HttpHeaderBuilder.generateHttpOkHeader(requestHeader.get("HTTP_VERSION"),
 			returnedData.length, mimeType);
-		responseStream.write(header.getBytes());
-		responseStream.write(returnedData);
-		responseStream.flush();
-		responseStream.close();
+			responseStream.write(header.getBytes("UTF-8"));
+			responseStream.write(returnedData);
+			responseStream.flush();
+			responseStream.close();
+
+			Logger.outputMessage("\"" + 
+				requestHeader.get("HTTP_METHOD")+ " " +
+				requestHeader.get("URL_RESOURCE") + " " + 
+				requestHeader.get("HTTP_VERSION")  +
+				"\" " + HttpStatusCode.OK.getCode() + " " + returnedData.length);
+		} catch(SocketException error) {
+			// responseStream.close();
+		}
 	}
 
 	public void setTemplateStrings(HashMap<String, String> templateStrings) {

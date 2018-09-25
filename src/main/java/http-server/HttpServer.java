@@ -16,13 +16,14 @@ public class HttpServer {
 		this.router = router;
 	}
 
-	public void run() {
+	public void run() throws CloneNotSupportedException {
 		try(ServerSocket serverSocket = new ServerSocket(port)) {
 			Logger.outputMessage("Server started at localhost:" + port);
 
 			while(true) {
 				Socket client = serverSocket.accept();
-				Thread clientThread = new Thread(new ClientHandler(client, router));
+				Thread clientThread = new Thread(new ClientHandler(client, 
+						new Router(router.getUrlRoute(), router.getUrlLazy())));
 				clientThread.start();
 			}
 		} catch (IOException error) {

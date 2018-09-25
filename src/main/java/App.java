@@ -14,7 +14,7 @@ public class App {
         return "Hello world.";
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, CloneNotSupportedException {
     	int port = args.length > 0 ? Integer.parseInt(args[0]) : AppConfig.DEFAULT_PORT;
     	String servedDirectory = args.length > 1 ? args[1] : AppConfig.DIRECTORY_ROOT;
 

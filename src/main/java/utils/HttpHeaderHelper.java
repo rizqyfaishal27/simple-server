@@ -1,8 +1,8 @@
 package utils;
 
 import java.util.HashMap;
-import java.io.BufferedInputStream;
-import java.io.IOException; 
+import java.io.IOException;
+import java.io.BufferedReader; 
 import java.lang.NullPointerException;
 import java.lang.IllegalArgumentException;
 import java.lang.ArrayIndexOutOfBoundsException;
@@ -18,7 +18,7 @@ public class HttpHeaderHelper {
 	public static final String HTTP_V1 = "HTTP/1.0";
 	public static final String HTTP_V1_1 = "HTTP/1.1";
 
-	public HttpHeaderHelper(BufferedInputStream request) throws IOException{
+	public HttpHeaderHelper(BufferedReader request) throws IOException{
 		try {
 			byte[] requestByte = ReadLineHelper.readLine(request);
 			String requestTextPerLine = new String(requestByte);
@@ -47,7 +47,7 @@ public class HttpHeaderHelper {
 					throw new BadRequestException("Bad Format 2");
 				} else if(temp.length > 2) {
 					for (int i = 2;i<temp.length;i++) {
-						temp[1] += temp[i];
+						temp[1] += ( ":" + temp[i].trim());
 					}
 				}
 				String headerKey = temp[0].toUpperCase();
@@ -55,22 +55,27 @@ public class HttpHeaderHelper {
 				headers.put(headerKey, headerValue);
 				requestByte = ReadLineHelper.readLine(request);
 			}
-			if(headers.containsKey("CONTENT-TYPE") && headers.get("CONTENT-TYPE").equals("application/x-www-form-urlencoded")) {
-				requestByte = ReadLineHelper.readLine(request);
-				if(requestByte.length > 0) {
-					requestTextPerLine = new String(requestByte);
-					String headerBody = requestTextPerLine;
-					headers.put("BODY", headerBody);
+			if(headers.get("HTTP_METHOD").equals("POST")) {
+				if(headers.containsKey("CONTENT-TYPE") &&
+					headers.get("CONTENT-TYPE").equals("application/x-www-form-urlencoded")) {
+					int length = Integer.parseInt(headers.get("CONTENT-LENGTH"));
+					requestByte = ReadLineHelper.readLine(request, length);
+					if(requestByte.length > 0) {
+						requestTextPerLine = new String(requestByte);
+						String headerBody = requestTextPerLine;
+						headers.put("HTTP_BODY", headerBody);
+					}
+				} else {
+					throw new BadRequestException("Bad Format 3");
 				}
+				
 			}
 			headers.put("IS_VALID", "true");
-			System.out.println(headers);
 		} catch(NotImplementedException error) {
 			headers.put("IS_VALID", "false");
 			headers.put("REASON", error.getMessage());
 			headers.put("STATUS_CODE", String.valueOf(HttpStatusCode.NOT_IMPLEMENTED.getCode()));
 		} catch(BadRequestException error) {
-			System.out.println(error.getMessage());
 			headers.put("IS_VALID", "false");
 			headers.put("REASON", error.getMessage());
 			headers.put("STATUS_CODE", String.valueOf(HttpStatusCode.BAD_REQUEST.getCode()));
@@ -79,6 +84,16 @@ public class HttpHeaderHelper {
 
 	public HashMap<String, String> getHeaderMap() {
 		return headers;
+	}
+
+	public static HashMap<String, String> constructHeaderBody(String decodedBody) {
+		String[] temp = decodedBody.split("&");
+		HashMap<String, String> returnedData = new HashMap<String, String>();
+		for(String body: temp) {
+			String[] parsed = body.split("=");
+			returnedData.put(parsed[0].trim(), parsed[1].trim());
+		}
+		return returnedData;
 	}
 
 	

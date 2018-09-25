@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import httpstatus.HttpStatusCode;
 
-public abstract class Response {
+public abstract class Response implements Cloneable {
 
 	protected HttpStatusCode statusCode;
 	protected BufferedOutputStream responseStream;
@@ -56,6 +56,10 @@ public abstract class Response {
 
 
 	public abstract void send() throws IOException;
+
+	public Object clone() throws CloneNotSupportedException {
+		return (Response) super.clone();
+	}
 
 
 	

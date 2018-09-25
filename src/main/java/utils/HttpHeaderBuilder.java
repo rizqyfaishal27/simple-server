@@ -61,6 +61,9 @@ public class HttpHeaderBuilder {
 		sb.append(commonHeader);
 		header.set("Content-Type", String.valueOf(mimeType));
 		header.set("Content-Length", String.valueOf(contentLength));
+		if(mimeType.equals("text/plain")) {
+			header.set("Charset", "UTF-8");
+		}
 		sb.append(header.generateHeaderString());
 		sb.append("\r\n");
 		return sb.toString();

@@ -40,8 +40,10 @@ public class RouterConfig {
 	public static void additionalConfig(Router router, String baseDirectory) throws IOException {
 		String returnedData = "";
 		String redirectedLocation = "/hello-world";
+
 		Response foundResponse = new FoundResponse("/hello-world", returnedData.getBytes(), null, null);
 		router.register("GET:/", foundResponse, false);
+		router.register("POST:/", foundResponse, false);
 
 		HashMap<String, String> helloWorldTemplateStrings = new HashMap<String, String>();
 		helloWorldTemplateStrings.put("__HELLO__", "World");
@@ -55,7 +57,12 @@ public class RouterConfig {
 		Response backgroundResponse = new SuccessResponse(baseDirectory + "/background.jpg", null, null, null, false);
 		router.register("GET:/background", backgroundResponse, true);
 
+		Response helloWorldPostResponse = new SuccessResponse(baseDirectory + "/hello-world.html",
+			null, null, null, true);
+		router.register("POST:/hello-world", helloWorldPostResponse, true);
 
+		Response infoResponse = new SuccessResponse("__DATA__", null, null, null, false);
+		router.register("GET:/info", infoResponse, true);
 		
 	}
 
