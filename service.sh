@@ -32,7 +32,7 @@ DESC="Simple Server Daemon"               # String describing the service
 NAME="simple-server"                       # Name of the service, will be used in another vars
 DAEMON="/usr/bin/simple-server"           # Path to the service executable, e.g. /usr/bin/java
 SERVER_LOG="/var/log/server.log"
-DAEMON_ARGS="80 >> $SERVER_LOG"  # Arguments passed to the service startup
+DAEMON_ARGS="80"  # Arguments passed to the service startup
 
 WORK_DIR="/root/simple-server"               # Working directory where the service will be started, defaults to /var/lib/${NAME}
 USER="daemon"                                # User that will spawn the process, defaults to the service name
