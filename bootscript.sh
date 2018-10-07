@@ -31,8 +31,8 @@ chmod +x service.sh
 ./service.sh install
 
 # Starting Service
-service simpleServer start
+service simpleserver start
 sleep 5
-service simpleServer status
-cat /var/run/simpleServer.log
+service simpleserver status
+cat /var/run/simpleserver.log
 
