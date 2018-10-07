@@ -29,13 +29,13 @@
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Simple Server Daemon"               # String describing the service
-NAME="daemon"                       # Name of the service, will be used in another vars
+NAME="simpleserver"                       # Name of the service, will be used in another vars
 DAEMON="/usr/bin/simple-server"           # Path to the service executable, e.g. /usr/bin/java
 DAEMON_ARGS="80"  # Arguments passed to the service startup
 
 WORK_DIR="/var/lib/${NAME}"               # Working directory where the service will be started, defaults to /var/lib/${NAME}
-USER=$NAME                                # User that will spawn the process, defaults to the service name
-GROUP=$NAME                               # Group that will spawn the process, defaults to the service name
+USER="root"                                # User that will spawn the process, defaults to the service name
+GROUP="root"                               # Group that will spawn the process, defaults to the service name
 PIDFILE=/var/run/${NAME}.pid              # Pid file location, defaults to /var/run/${NAME}.pid
 SCRIPTNAME=/etc/init.d/$NAME              # Location of this init script
 LOG_PATH=/var/log                         # Standard output and Standard error will be outputted here
