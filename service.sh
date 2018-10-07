@@ -29,7 +29,7 @@
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Simple Server Daemon"               # String describing the service
-NAME="simpleserver"                       # Name of the service, will be used in another vars
+NAME="daemon"                       # Name of the service, will be used in another vars
 DAEMON="/usr/bin/simple-server"           # Path to the service executable, e.g. /usr/bin/java
 DAEMON_ARGS="80"  # Arguments passed to the service startup
 
