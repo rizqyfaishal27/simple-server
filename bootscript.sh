@@ -1,16 +1,22 @@
 # Update repository 
 # Install jdk, curl, git
 apt-get update
-apt-get -q install default-jre git curl unzip wget
+# apt-get install -y software-properties-common
+# add-apt-repository -y ppa:webupd8team/java
+apt-get -q install openjdk-8-jdk git curl unzip wget
 
-export PATH=$PATH:$JAVA_HOME
+touch /etc/environment
+echo JAVA_HOME="/usr/lib/jvm/java-8-oracle" >> /etc/environment
+source /etc/environment
 
 # Install Gradle
+rm -rf /opt/gradle
 mkdir /opt/gradle
 cd /opt/gradle
 wget https://services.gradle.org/distributions/gradle-4.10.2-all.zip
-unzip -d /opt/gradle/gradle-4.10.2-all.zip
-export PATH=$PATH:/opt/gradle/gradle-4.10.2-all/bin
+unzip -q /opt/gradle/gradle-4.10.2-all.zip
+export PATH=$PATH:/opt/gradle/gradle-4.10.2/bin
+echo $PATH
 
 # Cloning Project Repository
 cd ~
@@ -26,3 +32,6 @@ chmod +x service.sh
 
 # Starting Service
 service simpleServer start
+
+
+
