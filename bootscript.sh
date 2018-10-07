@@ -3,7 +3,7 @@
 apt-get update
 # apt-get install -y software-properties-common
 # add-apt-repository -y ppa:webupd8team/java
-apt-get -q install openjdk-8-jdk git curl unzip wget
+apt-get -y install openjdk-8-jdk git curl unzip wget
 
 touch /etc/environment
 echo JAVA_HOME="/usr/lib/jvm/java-8-oracle" >> /etc/environment
@@ -25,13 +25,14 @@ git clone https://github.com/rizqyfaishal27/simple-server.git
 cd simple-server
 gradle build
 gradle installDist
-mv -r build/install/simple-server/bin /usr/
-mv -r build/install/simple-server/lib /usr/
+mv build/install/simple-server/bin/* /usr/bin/
+mv build/install/simple-server/lib/* /usr/lib/
 chmod +x service.sh
 ./service.sh install
 
 # Starting Service
 service simpleServer start
-
-
+sleep 5
+service simpleServer status
+cat /var/run/simpleServer.log
 

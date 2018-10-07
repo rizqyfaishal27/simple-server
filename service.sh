@@ -16,11 +16,13 @@
 # Description:                simple-server daemon
 ### END INIT INFO
 
-scriptFile=$(readlink -fn $(type -p $0))                   # the absolute, dereferenced path of this script file
+scriptFile=$(readlink -f -n $(type -p $0))                   # the absolute, dereferenced path of this script file
 scriptDir=$(dirname $scriptFile)                           # absolute path of the script directory
 applDir="$scriptDir"                                       # home directory of the service application
 serviceName="SimpleServer"                                 # service name
 serviceNameLo="simpleServer"                               # service name with the first letter in lowercase
+serviceUser="root"
+serviceGroup="root"
 serviceUserHome="$applDir"                                 # home directory of the service user
 serviceLogFile="/var/log/$serviceNameLo.log"               # log file for StdOut/StdErr
 maxShutdownTime=15                                         # maximum number of seconds to wait for the daemon to terminate normally
@@ -38,6 +40,7 @@ etcInitDFile="/etc/init.d/$serviceNameLo"                  # symlink to this scr
 function makeFileWritable {
    local filename="$1"
    touch $filename || return 1
+   chgrp $serviceGroup $filename || return 1
    chmod g+w $filename || return 1
    return 0; }
 
