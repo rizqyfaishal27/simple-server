@@ -76,7 +76,7 @@ public class ClientHandler implements Runnable {
 							SuccessResponse infoResponse = (SuccessResponse) urlLists.get("GET:" + urlQuerySplit[0]);
 
 							if(urlQuerySplit.length <= 1) {
-								infoTemplateString.put("__DATA__", "No Data");
+								infoTemplateString.put("__DATA__", "No Data\r\n");
 							} else {
 								String decodedUrl = URLDecoder.decode(urlQuerySplit[1], "UTF-8");
 								HashMap<String, String> queryParams = UrlQueryParamsParser.constructQueryParams(decodedUrl);
