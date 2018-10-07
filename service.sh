@@ -1,11 +1,11 @@
 #!/bin/bash
 ### BEGIN INIT INFO
-# Provides:          <service name>
+# Provides:          simple-server
 # Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: <service description>
+# Short-Description: Simple Server
 ### END INIT INFO
 
 #################################################################################
@@ -29,18 +29,19 @@
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Simple Server Daemon"               # String describing the service
-NAME="simpleserver"                       # Name of the service, will be used in another vars
+NAME="simple-server"                       # Name of the service, will be used in another vars
 DAEMON="/usr/bin/simple-server"           # Path to the service executable, e.g. /usr/bin/java
-DAEMON_ARGS="80"  # Arguments passed to the service startup
+SERVER_LOG="/var/log/server.log"
+DAEMON_ARGS="80 >> $SERVER_LOG"  # Arguments passed to the service startup
 
-WORK_DIR="/var/lib/${NAME}"               # Working directory where the service will be started, defaults to /var/lib/${NAME}
+WORK_DIR="/root/simple-server"               # Working directory where the service will be started, defaults to /var/lib/${NAME}
 USER="daemon"                                # User that will spawn the process, defaults to the service name
 GROUP="daemon"                               # Group that will spawn the process, defaults to the service name
 PIDFILE=/var/run/${NAME}.pid              # Pid file location, defaults to /var/run/${NAME}.pid
 SCRIPTNAME=/etc/init.d/$NAME              # Location of this init script
 LOG_PATH=/var/log                         # Standard output and Standard error will be outputted here
 
-START_STOP_DAEMON_OPTIONS="--chuid=$USER:$GROUP --make-pidfile --background --chdir=$WORK_DIR"
+START_STOP_DAEMON_OPTIONS="--make-pidfile --background --chdir=$WORK_DIR"
 
 #################################################################################
 # Change the code below if needed
@@ -69,7 +70,7 @@ do_start()
   #   0 if daemon has been started
   #   1 if daemon was already running
   #   2 if daemon could not be started
-  start-stop-daemon $START_STOP_DAEMON_OPTIONS --start --pidfile=$PIDFILE --exec=$DAEMON --test >> ${LOG_PATH}/${NAME}.out 2>> ${LOG_PATH}/${NAME}.err || return 1
+  # start-stop-daemon $START_STOP_DAEMON_OPTIONS --start --pidfile=$PIDFILE --exec=$DAEMON --test >> ${LOG_PATH}/${NAME}.out 2>> ${LOG_PATH}/${NAME}.err || return 1
   start-stop-daemon $START_STOP_DAEMON_OPTIONS --start --pidfile=$PIDFILE --exec=$DAEMON -- $DAEMON_ARGS >> ${LOG_PATH}/${NAME}.out 2>> ${LOG_PATH}/${NAME}.err || return 2
   # Add code here, if necessary, that waits for the process to be ready
   # to handle requests from services started subsequently which depend
