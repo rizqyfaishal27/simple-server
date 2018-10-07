@@ -27,7 +27,7 @@ maxShutdownTime=15                                         # maximum number of s
 pidFile="/var/run/$serviceNameLo.pid"                      # name of PID file (PID = process ID number)
 javaCommand="java"                                         # JDK java executable
 javaCommandLineKeyword="simple-server"                     
-serverExe="./simple-server"                                # file name of the Java application launcher executable
+serverExe="simple-server"                                  # file name of the Java application launcher executable
 serverPort="8080"                                          # arguments for Java launcher
 exeCommandLine="$serverExe $serverPort"                    # command line to start the Java service application
 rcFileBaseName="rc$serviceNameLo"                          # basename of the "rc" symlink file for this script
