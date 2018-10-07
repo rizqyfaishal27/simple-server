@@ -1,203 +1,176 @@
-#!/bin/sh
-#
-# Reference: http://www.source-code.biz/snippets/java/javaDaemonTest.sh.txt (editted)
-#
-
-
+#!/bin/bash
 ### BEGIN INIT INFO
-# Provides:                   simpleServer
-# Required-Start:             $network $local_fs $remote_fs $syslog
-# X-UnitedLinux-Should-Start: $named sendmail
-# Required-Stop:              $network $local_fs $remote_fs syslog
-# X-UnitedLinux-Should-Stop:  $named sendmail
-# Default-Start:              3 5
-# Default-Stop:               0 1 2 6
-# Short-Description:          SimpleServer
-# Description:                simple-server daemon
+# Provides:          <service name>
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: <service description>
 ### END INIT INFO
 
-scriptFile=$(readlink -f -n $(type -p $0))                   # the absolute, dereferenced path of this script file
-scriptDir=$(dirname $scriptFile)                           # absolute path of the script directory
-applDir="$scriptDir"                                       # home directory of the service application
-serviceName="SimpleServer"                                 # service name
-serviceNameLo="simpleServer"                               # service name with the first letter in lowercase
-serviceUser="root"
-serviceGroup="root"
-serviceUserHome="$applDir"                                 # home directory of the service user
-serviceLogFile="/var/log/$serviceNameLo.log"               # log file for StdOut/StdErr
-maxShutdownTime=15                                         # maximum number of seconds to wait for the daemon to terminate normally
-pidFile="/var/run/$serviceNameLo.pid"                      # name of PID file (PID = process ID number)
-javaCommand="java"                                         # JDK java executable
-javaCommandLineKeyword="simple-server"                     
-serverExe="simple-server"                                  # file name of the Java application launcher executable
-serverPort="80"                                            # arguments for Java launcher
-exeCommandLine="$serverExe $serverPort"                    # command line to start the Java service application
-rcFileBaseName="rc$serviceNameLo"                          # basename of the "rc" symlink file for this script
-rcFileName="/usr/local/sbin/$rcFileBaseName"               # full path of the "rc" symlink file for this script
-etcInitDFile="/etc/init.d/$serviceNameLo"                  # symlink to this script from /etc/init.d
+#################################################################################
+# 
+# start-stop-daemon template for creating service scripts out of executables
+# 
+# Most of the installations can be achived by changing the variables below.
+#
+# This template is meant to be used freely. 
+# This template derives from a common template that is found on the web. 
+# Unfornately I could not find the original source to give the proper credits
+#
+# source: https://gist.github.com/bcap/5397674
+# Feel free to contribute!
+#################################################################################
 
-# Makes the file $1 writable by the group $serviceGroup.
-function makeFileWritable {
-   local filename="$1"
-   touch $filename || return 1
-   chgrp $serviceGroup $filename || return 1
-   chmod g+w $filename || return 1
-   return 0; }
 
-# Returns 0 if the process with PID $1 is running.
-function checkProcessIsRunning {
-   local pid="$1"
-   if [ -z "$pid" -o "$pid" == " " ]; then return 1; fi
-   if [ ! -e /proc/$pid ]; then return 1; fi
-   return 0; }
+#################################################################################
+# Fill/change the following vars
+#################################################################################
 
-# Returns 0 if the process with PID $1 is our Java service process.
-function checkProcessIsOurService {
-   local pid="$1"
-   local cmd="$(ps -p $pid --no-headers -o comm)"
-   if [ "$cmd" != "$javaCommand" -a "$cmd" != "$javaCommand.bin" ]; then return 1; fi
-   grep -q --binary -F "$javaCommandLineKeyword" /proc/$pid/cmdline
-   if [ $? -ne 0 ]; then return 1; fi
-   return 0; }
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+DESC="Simple Server Daemon"               # String describing the service
+NAME="simpleserver"                       # Name of the service, will be used in another vars
+DAEMON="/usr/bin/simple-server"           # Path to the service executable, e.g. /usr/bin/java
+DAEMON_ARGS="80"  # Arguments passed to the service startup
 
-# Returns 0 when the service is running and sets the variable $servicePid to the PID.
-function getServicePid {
-   if [ ! -f $pidFile ]; then return 1; fi
-   servicePid="$(<$pidFile)"
-   checkProcessIsRunning $servicePid || return 1
-   checkProcessIsOurService $servicePid || return 1
-   return 0; }
+WORK_DIR="/var/lib/${NAME}"               # Working directory where the service will be started, defaults to /var/lib/${NAME}
+USER=$NAME                                # User that will spawn the process, defaults to the service name
+GROUP=$NAME                               # Group that will spawn the process, defaults to the service name
+PIDFILE=/var/run/${NAME}.pid              # Pid file location, defaults to /var/run/${NAME}.pid
+SCRIPTNAME=/etc/init.d/$NAME              # Location of this init script
+LOG_PATH=/var/log/$NAME                   # Standard output and Standard error will be outputted here
 
-function startServiceProcess {
-   cd $applDir || return 1
-   rm -f $pidFile
-   makeFileWritable $pidFile || return 1
-   makeFileWritable $serviceLogFile || return 1
-   local cmd="setsid $exeCommandLine >>$serviceLogFile 2>&1 & echo \$! >$pidFile"
-   sudo -u $serviceUser $SHELL -c "$cmd" || return 1
-   sleep 0.1
-   servicePid="$(<$pidFile)"
-   if checkProcessIsRunning $servicePid; then :; else
-      echo -ne "\n$serviceName start failed, see logfile."
-      return 1
-      fi
-   return 0; }
+START_STOP_DAEMON_OPTIONS="--chuid=$USER:$GROUP --background --chdir=$WORK_DIR"
 
-function stopServiceProcess {
-   kill $servicePid || return 1
-   for ((i=0; i<maxShutdownTime*10; i++)); do
-      checkProcessIsRunning $servicePid
-      if [ $? -ne 0 ]; then
-         rm -f $pidFile
-         return 0
-         fi
-      sleep 0.1
-      done
-   echo -e "\n$serviceName did not terminate within $maxShutdownTime seconds, sending SIGKILL..."
-   kill -s KILL $servicePid || return 1
-   local killWaitTime=15
-   for ((i=0; i<killWaitTime*10; i++)); do
-      checkProcessIsRunning $servicePid
-      if [ $? -ne 0 ]; then
-         rm -f $pidFile
-         return 0
-         fi
-      sleep 0.1
-      done
-   echo "Error: $serviceName could not be stopped within $maxShutdownTime+$killWaitTime seconds!"
-   return 1; }
+#################################################################################
+# Change the code below if needed
+#################################################################################
 
-function runInConsoleMode {
-   getServicePid
-   if [ $? -eq 0 ]; then echo "$serviceName is already running"; return 1; fi
-   cd $applDir || return 1
-   sudo -u $serviceUser $exeCommandLine || return 1
-   return 0; }
+# Exit if the package is not installed
+[ -x "$DAEMON" ] || exit 0
 
-function startService {
-   getServicePid
-   if [ $? -eq 0 ]; then echo -n "$serviceName is already running"; rc_failed 0; rc_status -v; return 0; fi
-   echo -n "Starting $serviceName   "
-   startServiceProcess
-   if [ $? -ne 0 ]; then rc_failed 1; rc_status -v; return 1; fi
-   rc_failed 0
-   rc_status -v
-   return 0; }
+# Read configuration variable file if it is present
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME
 
-function stopService {
-   getServicePid
-   if [ $? -ne 0 ]; then echo -n "$serviceName is not running"; rc_failed 0; rc_status -v; return 0; fi
-   echo -n "Stopping $serviceName   "
-   stopServiceProcess
-   if [ $? -ne 0 ]; then rc_failed 1; rc_status -v; return 1; fi
-   rc_failed 0
-   rc_status -v
-   return 0; }
+# Load the VERBOSE setting and other rcS variables
+. /lib/init/vars.sh
 
-function checkServiceStatus {
-   echo -n "Checking for $serviceName:   "
-   if getServicePid; then
-      rc_failed 0
-    else
-      rc_failed 3
-      fi
-   rc_status -v
-   return 0; }
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.2-14) to ensure that this file is present
+# and status_of_proc is working.
+. /lib/lsb/init-functions
 
-function installService {
-   getent group $serviceGroup >/dev/null 2>&1
-   if [ $? -ne 0 ]; then
-      echo Creating group $serviceGroup
-      groupadd -r $serviceGroup || return 1
-      fi
-   id -u $serviceUser >/dev/null 2>&1
-   if [ $? -ne 0 ]; then
-      echo Creating user $serviceUser
-      useradd -r -c "user for $serviceName service" -g $serviceGroup -G users -d $serviceUserHome $serviceUser
-      fi
-   ln -s $scriptFile $rcFileName || return 1
-   ln -s $scriptFile $etcInitDFile || return 1
-   insserv $serviceNameLo || return 1
-   echo $serviceName installed.
-   echo You may now use $rcFileBaseName to call this script.
-   return 0; }
+#
+# Function that starts the daemon/service
+#
+do_start()
+{
+  # Return
+  #   0 if daemon has been started
+  #   1 if daemon was already running
+  #   2 if daemon could not be started
+  start-stop-daemon $START_STOP_DAEMON_OPTIONS --start --pidfile $PIDFILE --exec $DAEMON --test >> ${LOG_PATH}/${NAME}.out 2>> ${LOG_PATH}/${NAME}.err || return 1
+  start-stop-daemon $START_STOP_DAEMON_OPTIONS --start --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_ARGS >> ${LOG_PATH}/${NAME}.out 2>> ${LOG_PATH}/${NAME}.err || return 2
+  # Add code here, if necessary, that waits for the process to be ready
+  # to handle requests from services started subsequently which depend
+  # on this one.  As a last resort, sleep for some time.
+}
 
-function uninstallService {
-   insserv -r $serviceNameLo || return 1
-   rm -f $rcFileName
-   rm -f $etcInitDFile
-   echo $serviceName uninstalled.
-   return 0; }
+#
+# Function that stops the daemon/service
+#
+do_stop()
+{
+  # Return
+  #   0 if daemon has been stopped
+  #   1 if daemon was already stopped
+  #   2 if daemon could not be stopped
+  #   other if a failure occurred
+  start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE
+  RETVAL="$?"
+  [ "$RETVAL" = 2 ] && return 2
+  # Wait for children to finish too if this is a daemon that forks
+  # and if the daemon is only ever run from this initscript.
+  # If the above conditions are not satisfied then add some other code
+  # that waits for the process to drop all resources that could be
+  # needed by services started subsequently.  A last resort is to
+  # sleep for some time.
+  start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON
+  [ "$?" = 2 ] && return 2
+  # Many daemons don't delete their pidfiles when they exit.
+  rm -f $PIDFILE
+  return "$RETVAL"
+}
 
-function main {
-   rc_reset
-   case "$1" in
-      console)                                             # runs the Java program in console mode
-         runInConsoleMode
-         ;;
-      start)                                               # starts the Java program as a Linux service
-         startService
-         ;;
-      stop)                                                # stops the Java program service
-         stopService
-         ;;
-      restart)                                             # stops and restarts the service
-         stopService && startService
-         ;;
-      status)                                              # displays the service status
-         checkServiceStatus
-         ;;
-      install)                                             # installs the service in the OS
-         installService
-         ;;
-      uninstall)                                           # uninstalls the service in the OS
-         uninstallService
-         ;;
-      *)
-         echo "Usage: $0 {console|start|stop|restart|status|install|uninstall}"
-         exit 1
-         ;;
+#
+# Function that sends a SIGHUP to the daemon/service
+#
+do_reload() {
+  #
+  # If the daemon can reload its configuration without
+  # restarting (for example, when it is sent a SIGHUP),
+  # then implement that here.
+  #
+  start-stop-daemon --stop --signal 1 --quiet --pidfile $PIDFILE --name $NAME
+  return 0
+}
+
+case "$1" in
+  start) 
+    [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
+    do_start
+    case "$?" in
+      0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+      2)   [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+    esac
+  ;;
+  stop)
+    [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+    do_stop
+    case "$?" in
+      0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+      2)   [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+    esac
+  ;;
+  status)
+    status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
+  ;;
+  #reload|force-reload)
+  #
+  # If do_reload() is not implemented then leave this commented out
+  # and leave 'force-reload' as an alias for 'restart'.
+  #
+  #log_daemon_msg "Reloading $DESC" "$NAME"
+  #do_reload
+  #log_end_msg $?
+  #;;
+  restart|force-reload)
+  #
+  # If the "reload" option is implemented then remove the
+  # 'force-reload' alias
+  #
+    log_daemon_msg "Restarting $DESC" "$NAME"
+    do_stop
+    case "$?" in
+      0|1)
+      do_start
+      case "$?" in
+        0) log_end_msg 0 ;;
+        1) log_end_msg 1 ;; # Old process is still running
+        *) log_end_msg 1 ;; # Failed to start
       esac
-   rc_exit; }
+      ;;
+      *)
+        # Failed to stop
+        log_end_msg 1
+      ;;
+    esac
+  ;;
+  *)
+  #echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload}" >&2
+  echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload}" >&2
+  exit 3
+  ;;
+esac
 
-main $1
+:
