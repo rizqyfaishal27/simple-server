@@ -13,3 +13,15 @@ unzip -d /opt/gradle gradle-4.10.2-bin.zip
 export PATH=$PATH:/opt/gradle/gradle-4.10.2/bin
 
 # Cloning Project Repository
+cd ~
+git clone https://github.com/rizqyfaishal27/simple-server.git
+cd simple-server
+gradle build
+gradle installDist
+mv -r build/install/simple-server/bin /usr/
+mv -r build/install/simple-server/lib /usr/
+chmod +x service.sh
+./service install
+
+# Starting Service
+service simpleServer start

@@ -5,41 +5,31 @@
 
 
 ### BEGIN INIT INFO
-# Provides:                   SimpleServer
+# Provides:                   simpleServer
 # Required-Start:             $network $local_fs $remote_fs $syslog
 # X-UnitedLinux-Should-Start: $named sendmail
 # Required-Stop:              $network $local_fs $remote_fs syslog
 # X-UnitedLinux-Should-Stop:  $named sendmail
 # Default-Start:              3 5
 # Default-Stop:               0 1 2 6
-# Short-Description:          JavaDaemonServer
-# Description:                Java server daemon
+# Short-Description:          SimpleServer
+# Description:                simple-server daemon
 ### END INIT INFO
-
-if [ -z "$JAVA_HOME" ]; then                               # if JAVA_HOME is undefined
-   if [ -f /usr/share/java-utils/java-functions ]; then
-      . /usr/share/java-utils/java-functions; set_jvm      # JPackage standard method to set JAVA_HOME
-    elif [ -n "$(type -t setJava)" ]; then
-      . setJava ""; fi                                     # old SUSE method to set JAVA_HOME
-   if [ -z "$JAVA_HOME" ]; then echo Unable to set JAVA_HOME environment variable; exit 1; fi
-   fi
 
 scriptFile=$(readlink -fn $(type -p $0))                   # the absolute, dereferenced path of this script file
 scriptDir=$(dirname $scriptFile)                           # absolute path of the script directory
 applDir="$scriptDir"                                       # home directory of the service application
-serviceName="JavaDaemonTest"                               # service name
-serviceNameLo="javaDaemonTest"                             # service name with the first letter in lowercase
-serviceUser="jdmntest"                                     # OS user name for the service
+serviceName="SimpleServer"                                 # service name
+serviceNameLo="simpleServer"                               # service name with the first letter in lowercase
 serviceUserHome="$applDir"                                 # home directory of the service user
-serviceGroup="jdmntest"                                    # OS group name for the service
 serviceLogFile="/var/log/$serviceNameLo.log"               # log file for StdOut/StdErr
 maxShutdownTime=15                                         # maximum number of seconds to wait for the daemon to terminate normally
 pidFile="/var/run/$serviceNameLo.pid"                      # name of PID file (PID = process ID number)
-javaCommand="java"                                         # name of the Java launcher without the path
-javaExe="$JAVA_HOME/bin/$javaCommand"                      # file name of the Java application launcher executable
-javaArgs="JavaDaemonTest"                                  # arguments for Java launcher
-javaCommandLine="$javaExe $javaArgs"                       # command line to start the Java service application
-javaCommandLineKeyword="JavaDaemonTest"                    # a keyword that occurs on the commandline, used to detect an already running service process and to distinguish it from others
+javaCommand="java"                                         # JDK java executable
+javaCommandLineKeyword="simple-server"                     
+serverExe="./simple-server"                                # file name of the Java application launcher executable
+serverPort="8080"                                          # arguments for Java launcher
+exeCommandLine="$serverExe $serverPort"                    # command line to start the Java service application
 rcFileBaseName="rc$serviceNameLo"                          # basename of the "rc" symlink file for this script
 rcFileName="/usr/local/sbin/$rcFileBaseName"               # full path of the "rc" symlink file for this script
 etcInitDFile="/etc/init.d/$serviceNameLo"                  # symlink to this script from /etc/init.d
@@ -48,7 +38,6 @@ etcInitDFile="/etc/init.d/$serviceNameLo"                  # symlink to this scr
 function makeFileWritable {
    local filename="$1"
    touch $filename || return 1
-   chgrp $serviceGroup $filename || return 1
    chmod g+w $filename || return 1
    return 0; }
 
@@ -81,7 +70,7 @@ function startServiceProcess {
    rm -f $pidFile
    makeFileWritable $pidFile || return 1
    makeFileWritable $serviceLogFile || return 1
-   local cmd="setsid $javaCommandLine >>$serviceLogFile 2>&1 & echo \$! >$pidFile"
+   local cmd="setsid $exeCommandLine >>$serviceLogFile 2>&1 & echo \$! >$pidFile"
    sudo -u $serviceUser $SHELL -c "$cmd" || return 1
    sleep 0.1
    servicePid="$(<$pidFile)"
@@ -119,7 +108,7 @@ function runInConsoleMode {
    getServicePid
    if [ $? -eq 0 ]; then echo "$serviceName is already running"; return 1; fi
    cd $applDir || return 1
-   sudo -u $serviceUser $javaCommandLine || return 1
+   sudo -u $serviceUser $exeCommandLine || return 1
    return 0; }
 
 function startService {
