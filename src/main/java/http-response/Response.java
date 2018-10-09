@@ -8,7 +8,6 @@ import java.io.IOException;
 
 import httpstatus.HttpStatusCode;
 import request.Request;
-import webapp.models.AppState;
 
 public abstract class Response {
 
@@ -33,8 +32,6 @@ public abstract class Response {
 	public void send() throws IOException {
 		sendResponse();
 		closeResponseStream();
-		AppState.getInstance().incrementCount();
-		AppState.getInstance().writeStateToFile();
 	}
 
 	public abstract void sendResponse() throws IOException;

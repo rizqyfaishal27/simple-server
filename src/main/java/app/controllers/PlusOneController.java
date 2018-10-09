@@ -11,6 +11,7 @@ import response.JsonResponse;
 
 import webapp.models.AppSpec;
 
+
 public class PlusOneController extends BaseController{
 
 	public PlusOneController(Request request, BufferedOutputStream responseStream) {
@@ -24,6 +25,7 @@ public class PlusOneController extends BaseController{
 		String plusoneret = Integer.toString(number + 1);
 		data.put("apiVersion", apiVersion);
 		data.put("plusoneret", plusoneret);
+
 		return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
 	}
 

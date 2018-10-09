@@ -39,14 +39,16 @@ public class HelloAPIController extends BaseController{
 			String jsonString = HttpClient.sendGET("http://172.22.0.222:5000");
 			HashMap<String, String> decodedJson = new HashMap<String, String>();
 			decodedJson = mapper.readValue(jsonString, new TypeReference<HashMap<String, String>>(){});
+			AppState.getInstance().incrementCount();
 			String state = decodedJson.get("state");
 			String currentVisit = TimestampUtil.now();
-			String count = Integer.toString(AppState.getInstance().getCount() + 1);
+			String count = Integer.toString(AppState.getInstance().getCount());
 			String response = "Good " + state + ", " + requestText;
 			data.put("apiVersion", (String) AppSpec.getInstance().getInfo().get("version"));
 			data.put("count", count);
 			data.put("currentVisit", currentVisit);
 			data.put("response", response);
+			AppState.getInstance().writeStateToFile();
 			return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
 		} catch (Exception e) {
 			return new JsonResponse(data, HttpStatusCode.INTERNAL_SERVER_ERROR, request, responseStream);
