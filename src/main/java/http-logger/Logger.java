@@ -16,4 +16,12 @@ public class Logger {
 			+  " -------> " + ConsoleColors.RED_BOLD +  text + ConsoleColors.RESET);
 	}
 
+	public static void requestLogger(String method, String url, String httpVersion , int httpStatusCode, int contentLength) {
+		outputMessage("\"" + method + " " + url + " " + httpVersion  + "\" " + httpStatusCode + " " + contentLength);
+	}
+
+	public static void errorRequestLogger(String method, String url, String httpVersion , int httpStatusCode, int contentLength) {
+		errorMessage("\"" + method + " " + url + " " + httpVersion  + "\" " + httpStatusCode + " " + contentLength);
+	}
+
 }

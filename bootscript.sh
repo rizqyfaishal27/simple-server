@@ -28,11 +28,6 @@ gradle installDist
 mv build/install/simple-server/bin/* /usr/bin/
 mv build/install/simple-server/lib/* /usr/lib/
 chmod +x service.sh
-./service.sh install
-
-# Starting Service
-service simpleserver start
-sleep 5
-service simpleserver status
-cat /var/run/simpleserver.log
-
+./service.sh start
+sleep 3
+./service.sh status

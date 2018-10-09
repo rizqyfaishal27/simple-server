@@ -7,60 +7,37 @@ import java.io.IOException;
 
 
 import httpstatus.HttpStatusCode;
+import request.Request;
+import webapp.models.AppState;
 
-public abstract class Response implements Cloneable {
+public abstract class Response {
 
 	protected HttpStatusCode statusCode;
 	protected BufferedOutputStream responseStream;
-	protected byte[] returnedData;
-	protected HashMap<String, String> requestHeader;
+	protected Request request;
 
 
-	public Response(HttpStatusCode statusCode,
-		byte[] returnedData,
-		HashMap<String, String> requestHeader,
+	public Response(
+		HttpStatusCode statusCode,
+		Request request,
 		BufferedOutputStream responseStream) {
 		this.statusCode = statusCode;
-		this.returnedData = returnedData;
 		this.responseStream = responseStream;
-		this.requestHeader = requestHeader;
+		this.request = request;
 	}
 
-	public HttpStatusCode getStatusCode() {
-		return statusCode;
+	public void closeResponseStream() throws IOException {
+		this.responseStream.close();
 	}
 
-	public BufferedOutputStream getResponseStream() {
-		return responseStream;
+	public void send() throws IOException {
+		sendResponse();
+		closeResponseStream();
+		AppState.getInstance().incrementCount();
+		AppState.getInstance().writeStateToFile();
 	}
 
-	public byte[] getReturnedData() {
-		return returnedData;
-	}
-
-	public HashMap<String, String> getRequestHeader() {
-		return requestHeader;
-	}
-
-	public void setResponseStream(BufferedOutputStream responseStream) {
-		this.responseStream = responseStream;
-	}
-
-	public void setRequestHeader(HashMap<String, String> requestHeader) {
-		this.requestHeader = requestHeader;
-	}
-
-	public void setReturnedData(byte[] returnedData) {
-		this.returnedData = returnedData;
-	}
-
-
-	public abstract void send() throws IOException;
-
-	public Object clone() throws CloneNotSupportedException {
-		return (Response) super.clone();
-	}
-
+	public abstract void sendResponse() throws IOException;
 
 	
 }

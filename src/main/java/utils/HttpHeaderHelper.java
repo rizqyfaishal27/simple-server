@@ -12,88 +12,20 @@ import utils.ReadLineHelper;
 import exceptions.BadRequestException;
 import exceptions.NotImplementedException;
 
-public class HttpHeaderHelper {
-
-	HashMap<String, String> headers = new HashMap<String, String>();
-	public static final String HTTP_V1 = "HTTP/1.0";
-	public static final String HTTP_V1_1 = "HTTP/1.1";
-
-	public HttpHeaderHelper(BufferedReader request) throws IOException{
-		try {
-			byte[] requestByte = ReadLineHelper.readLine(request);
-			String requestTextPerLine = new String(requestByte);
-			String[] temp = requestTextPerLine.split(" ");
-
-			if(temp.length < 3) {
-				throw new BadRequestException("Bad format 1");
-			}
-
-			headers.put("HTTP_METHOD", temp[0]);
-			headers.put("URL_RESOURCE", temp[1]);
-			headers.put("HTTP_VERSION", temp[2]);
-			if(!headers.get("HTTP_VERSION").equals(HTTP_V1) && !headers.get("HTTP_VERSION").equals(HTTP_V1_1)) {
-				throw new NotImplementedException(headers.get("HTTP_VERSION"));
-			}
-
-			if(!headers.get("HTTP_METHOD").equals("GET") && !headers.get("HTTP_METHOD").equals("POST")) {
-				throw new NotImplementedException(headers.get("HTTP_METHOD"));
-			}
-
-			requestByte = ReadLineHelper.readLine(request);
-			while(requestByte.length > 0) {
-				requestTextPerLine = new String(requestByte);
-				temp = requestTextPerLine.split(":");
-				if(temp.length < 2) {
-					throw new BadRequestException("Bad Format 2");
-				} else if(temp.length > 2) {
-					for (int i = 2;i<temp.length;i++) {
-						temp[1] += ( ":" + temp[i].trim());
-					}
-				}
-				String headerKey = temp[0].toUpperCase();
-				String headerValue = temp[1].trim();
-				headers.put(headerKey, headerValue);
-				requestByte = ReadLineHelper.readLine(request);
-			}
-			if(headers.get("HTTP_METHOD").equals("POST")) {
-				if(headers.containsKey("CONTENT-TYPE") &&
-					headers.get("CONTENT-TYPE").equals("application/x-www-form-urlencoded")) {
-					int length = Integer.parseInt(headers.get("CONTENT-LENGTH"));
-					requestByte = ReadLineHelper.readLine(request, length);
-					if(requestByte.length > 0) {
-						requestTextPerLine = new String(requestByte);
-						String headerBody = requestTextPerLine;
-						headers.put("HTTP_BODY", headerBody);
-					}
-				} else {
-					throw new BadRequestException("Bad Format 3");
-				}
-				
-			}
-			headers.put("IS_VALID", "true");
-		} catch(NotImplementedException error) {
-			headers.put("IS_VALID", "false");
-			headers.put("REASON", error.getMessage());
-			headers.put("STATUS_CODE", String.valueOf(HttpStatusCode.NOT_IMPLEMENTED.getCode()));
-		} catch(BadRequestException error) {
-			headers.put("IS_VALID", "false");
-			headers.put("REASON", error.getMessage());
-			headers.put("STATUS_CODE", String.valueOf(HttpStatusCode.BAD_REQUEST.getCode()));
-		} 
-	}
-
-	public HashMap<String, String> getHeaderMap() {
-		return headers;
-	}
+public class HttpHeaderHelper {	
 
 	public static HashMap<String, String> constructHeaderBody(String decodedBody) {
-		String[] temp = decodedBody.split("&");
-		HashMap<String, String> returnedData = new HashMap<String, String>();
-		for(String body: temp) {
-			String[] parsed = body.split("=");
-			returnedData.put(parsed[0].trim(), parsed[1].trim());
+		try {
+			String[] temp = decodedBody.split("&");
+			HashMap<String, String> returnedData = new HashMap<String, String>();
+			for(String body: temp) {
+				String[] parsed = body.split("=");
+				returnedData.put(parsed[0].trim(), parsed[1].trim());
+			}
+			return returnedData;
+		} catch(Exception e) {
+			return null;
 		}
-		return returnedData;
 	}
 
 	

@@ -5,25 +5,27 @@ import java.io.IOException;
 
 import logger.Logger;
 import server.ClientHandler;
-import router.Router;
+import webapp.WebApp;
 
 public class HttpServer {
 	private int port;
-	private Router router;
+	private WebApp webApp;
 
-	public HttpServer(int port, Router router) {
+	public HttpServer(int port) {
 		this.port = port;
-		this.router = router;
 	}
 
-	public void run() throws CloneNotSupportedException {
+	public void setWebApp(WebApp webApp) {
+		this.webApp = webApp;
+	}
+
+	public void run() {
 		try(ServerSocket serverSocket = new ServerSocket(port)) {
 			Logger.outputMessage("Server started at localhost:" + port);
 
 			while(true) {
 				Socket client = serverSocket.accept();
-				Thread clientThread = new Thread(new ClientHandler(client, 
-						new Router(router.getUrlRoute(), router.getUrlLazy())));
+				Thread clientThread = new Thread(new ClientHandler(client, this.webApp));
 				clientThread.start();
 			}
 		} catch (IOException error) {
