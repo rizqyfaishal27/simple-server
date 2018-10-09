@@ -5,6 +5,7 @@ apt-get update
 # add-apt-repository -y ppa:webupd8team/java
 apt-get -y install openjdk-8-jdk git curl unzip wget
 
+service nginx start
 touch /etc/environment
 echo JAVA_HOME="/usr/lib/jvm/java-8-oracle" >> /etc/environment
 source /etc/environment
