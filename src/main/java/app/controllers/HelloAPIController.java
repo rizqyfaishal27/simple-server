@@ -41,10 +41,10 @@ public class HelloAPIController extends BaseController{
 			decodedJson = mapper.readValue(jsonString, new TypeReference<HashMap<String, String>>(){});
 			String state = decodedJson.get("state");
 			String currentVisit = TimestampUtil.now();
-			String count = Integer.toString(AppState.getInstance().getCount());
+			String count = Integer.toString(AppState.getInstance().getCount() + 1);
 			String response = "Good " + state + ", " + requestText;
 			data.put("apiVersion", (String) AppSpec.getInstance().getInfo().get("version"));
-			data.put("count", count + 1);
+			data.put("count", count);
 			data.put("currentVisit", currentVisit);
 			data.put("response", response);
 			return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
