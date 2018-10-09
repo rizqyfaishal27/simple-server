@@ -44,7 +44,7 @@ public class HelloAPIController extends BaseController{
 			String count = Integer.toString(AppState.getInstance().getCount());
 			String response = "Good " + state + ", " + requestText;
 			data.put("apiVersion", (String) AppSpec.getInstance().getInfo().get("version"));
-			data.put("count", count);
+			data.put("count", count + 1);
 			data.put("currentVisit", currentVisit);
 			data.put("response", response);
 			return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
