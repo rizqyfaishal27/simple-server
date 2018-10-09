@@ -12,7 +12,7 @@ public class AppState {
 	private int count;
 
 	private static final AppState INSTANCE = new AppState();
-	private static final String statePath = "./server.state";
+	private static final String statePath = "/root/server.state";
 
 	private AppState() {
 		this.count = setUpState();

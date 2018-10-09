@@ -3,11 +3,10 @@
 apt-get update
 # apt-get install -y software-properties-common
 # add-apt-repository -y ppa:webupd8team/java
-apt-get -y install openjdk-8-jdk git curl unzip wget
+apt-get -y install openjdk-8-jdk git curl unzip wget nginx
 
-service nginx start
 touch /etc/environment
-echo JAVA_HOME="/usr/lib/jvm/java-8-oracle" >> /etc/environment
+echo JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" > /etc/environment
 source /etc/environment
 
 # Install Gradle
@@ -28,6 +27,8 @@ gradle build
 gradle installDist
 mv build/install/simple-server/bin/* /usr/bin/
 mv build/install/simple-server/lib/* /usr/lib/
+
+# Running service simple-server
 chmod +x service.sh
 ./service.sh start
 sleep 3
