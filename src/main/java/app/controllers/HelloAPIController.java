@@ -36,7 +36,7 @@ public class HelloAPIController extends BaseController{
 		}
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			String jsonString = HttpClient.sendGET("http://localhost:12345/api/plus_one/1");
+			String jsonString = HttpClient.sendGET("http://172.22.0.222:5000");
 			HashMap<String, String> decodedJson = new HashMap<String, String>();
 			decodedJson = mapper.readValue(jsonString, new TypeReference<HashMap<String, String>>(){});
 			String state = decodedJson.get("plusoneret");
