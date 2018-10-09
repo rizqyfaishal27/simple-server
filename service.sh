@@ -71,7 +71,7 @@ do_start()
   #   1 if daemon was already running
   #   2 if daemon could not be started
   # start-stop-daemon $START_STOP_DAEMON_OPTIONS --start --pidfile=$PIDFILE --exec=$DAEMON --test >> ${LOG_PATH}/${NAME}.out 2>> ${LOG_PATH}/${NAME}.err || return 1
-  start-stop-daemon $START_STOP_DAEMON_OPTIONS --start --pidfile=$PIDFILE --exec=$DAEMON -- $DAEMON_ARGS -1 ${LOG_PATH}/${NAME}.out -2 ${LOG_PATH}/${NAME}.err || return 2
+  start-stop-daemon $START_STOP_DAEMON_OPTIONS --start --pidfile=$PIDFILE --exec=$DAEMON -- $DAEMON_ARGS >> ${LOG_PATH}/${NAME}.out 2>> ${LOG_PATH}/${NAME}.err || return 2
   # Add code here, if necessary, that waits for the process to be ready
   # to handle requests from services started subsequently which depend
   # on this one.  As a last resort, sleep for some time.
