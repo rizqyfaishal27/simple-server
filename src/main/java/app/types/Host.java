@@ -5,7 +5,7 @@ public class Host {
     private String npm;
     private String ip;
 
-    public Host(String npm, String ip) {
+    public Host(String ip, String npm) {
         this.npm = npm;
         this.ip = ip;
     }

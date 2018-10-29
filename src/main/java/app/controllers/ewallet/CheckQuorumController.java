@@ -34,8 +34,7 @@ public class CheckQuorumController extends BaseController {
             HttpResponseClient response = HttpClient.sendGET(AppConfig.LIST_HOSTS_URL);
             if(response.getStatusCode() == 200) {
                 ObjectMapper mapper = new ObjectMapper();
-                ArrayList<Host> hostLists = mapper.readValue(response.getData(), 
-                    new TypeReference<ArrayList<Host>>(){});
+                Host[] hostLists = mapper.readValue(response.getData(), Host[].class);
                 int count = 0;
                 for(Host host: hostLists) {
                     Logger.outputMessage(host.getIp());
@@ -50,7 +49,7 @@ public class CheckQuorumController extends BaseController {
                     }
                 }
                 data.put("active_count", count);
-                data.put("total_count", hostLists.size());
+                data.put("total_count", hostLists.length);
             }
             return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
         } catch(IOException e) {
