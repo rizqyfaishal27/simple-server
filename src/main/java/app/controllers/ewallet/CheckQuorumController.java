@@ -2,6 +2,7 @@ package webapp.controllers.ewallet;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.ArrayList;
 
