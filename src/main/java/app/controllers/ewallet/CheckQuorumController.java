@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import webapp.controllers.BaseController;
+import webapp.types.Host;
 import utils.AppConfig;
 import utils.HttpResponseClient;
 import utils.HttpClient;
@@ -33,14 +34,12 @@ public class CheckQuorumController extends BaseController {
             HttpResponseClient response = HttpClient.sendGET(AppConfig.LIST_HOSTS_URL);
             if(response.getStatusCode() == 200) {
                 ObjectMapper mapper = new ObjectMapper();
-                ArrayList<String> hostLists = mapper.readValue(response.getData(), 
-                    new TypeReference<ArrayList<String>>(){});
+                ArrayList<Host> hostLists = mapper.readValue(response.getData(), 
+                    new TypeReference<ArrayList<Host>>(){});
                 int count = 0;
-                for(String host: hostLists) {
-                    Logger.outputMessage(host);
-                    HashMap<String, String> hostDecoded = mapper.readValue(host, 
-                        new TypeReference<HashMap<String, String>>() {});
-                    HttpResponseClient pingResponse = HttpClient.sendPOST(hostDecoded.get("ip"), 
+                for(Host host: hostLists) {
+                    Logger.outputMessage(host.getIp());
+                    HttpResponseClient pingResponse = HttpClient.sendPOST(host.getIp() + "/ewallet/ping", 
                         "application/json", "");
                     if(pingResponse.getStatusCode() == 200) {
                         HashMap<String, Integer> pingResponseDecoded = mapper.readValue(pingResponse.getData(),
