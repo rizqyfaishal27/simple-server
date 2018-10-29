@@ -53,6 +53,7 @@ public class CheckQuorumController extends BaseController {
             }
             return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
         } catch(IOException e) {
+            e.printStackTrace();
             return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
         }
     }
