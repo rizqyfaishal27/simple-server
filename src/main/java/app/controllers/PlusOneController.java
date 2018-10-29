@@ -19,7 +19,7 @@ public class PlusOneController extends BaseController{
 	}
 
 	public Response createResponse() {
-		HashMap<String, String> data = new HashMap<String, String>();
+		HashMap<String, Object> data = new HashMap<String, Object>();
 		int number = Integer.parseInt(request.getUrlParams().get("number"));
 		String apiVersion = (String) AppSpec.getInstance().getInfo().get("version");
 		String plusoneret = Integer.toString(number + 1);

@@ -16,9 +16,9 @@ import logger.Logger;
 
 public class JsonResponse extends Response {
 
-	private HashMap<String, String> data;
+	private HashMap<String, Object> data;
 
-	public JsonResponse(HashMap<String, String> data,
+	public JsonResponse(HashMap<String, Object> data,
 		HttpStatusCode httpStatus,
 		Request request, BufferedOutputStream responseStream) {
 		super(httpStatus, request, responseStream);

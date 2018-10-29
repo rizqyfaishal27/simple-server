@@ -1,6 +1,8 @@
 import java.io.IOException;
 import server.ThreadPoolServer;
 import utils.AppConfig;
+import utils.HttpClient;
+import utils.DBUtil;
 import webapp.WebApp;
 
 /*
@@ -13,9 +15,12 @@ public class App {
     	String servedDirectory = args.length > 1 ? args[1] : AppConfig.DIRECTORY_ROOT;
         int amountThread = args.length > 2 ? Integer.parseInt(args[2]) : AppConfig.AMOUNT_THREAD;
 
+        DBUtil.setupDatabase();
         ThreadPoolServer server = new ThreadPoolServer(port, amountThread);
         WebApp webApp = new WebApp(server);
         webApp.bootingUpServer();
+
+        
     }
 }
 

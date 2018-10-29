@@ -18,7 +18,7 @@ public class NotFoundController extends BaseController {
 	}
 
 	public Response createResponse() {
-		HashMap<String, String> data = new HashMap<String, String>();
+		HashMap<String, Object> data = new HashMap<String, Object>();
 		data.put("detail", "The requested URL was not found on the server.  If you entered the URL manually please check your spelling and try again.");
 		data.put("status", Integer.toString(HttpStatusCode.NOT_FOUND.getCode()));
 		data.put("title", HttpStatusCode.NOT_FOUND.getDescription());

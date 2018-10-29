@@ -240,11 +240,17 @@ public class Request {
 						e.printStackTrace();
 					}
 				} else {
-					throw new BadRequestException(BAD_REQUEST);
+					int length = Integer.parseInt(headers.get("CONTENT-LENGTH"));
+					requestByte = ReadLineHelper.readLine(requestInputStream, length);
+					if(requestByte.length > 0) {
+						throw new BadRequestException(BAD_REQUEST);
+					}
+					body = new HashMap<String, String>();
 				}
 			}
 			return new Request(url, originUrl, method, headers, body, queryParams, urlParams, httpVersion);
 		} catch(BadRequestException e) {
+			System.out.println(e.getMessage());
 			return new Request(BAD_REQUEST, e.getMessage(), 
 				originUrl, httpVersion, method);
 		} catch(NotImplementedException e) {

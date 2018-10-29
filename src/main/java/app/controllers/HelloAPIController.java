@@ -13,6 +13,7 @@ import request.Request;
 import response.Response;
 import response.JsonResponse;
 
+import utils.HttpResponseClient;
 import utils.HttpClient;
 import utils.TimestampUtil;
 import httpstatus.HttpStatusCode;
@@ -27,7 +28,7 @@ public class HelloAPIController extends BaseController{
 
 	public Response createResponse() {
 		String requestText = request.getBody().get("request");
-		HashMap<String, String> data = new HashMap<String, String>();
+		HashMap<String, Object> data = new HashMap<String, Object>();
 		if(requestText == null) {
 			data.put("detail", "\'request\' is required property");
 			data.put("status", Integer.toString(HttpStatusCode.BAD_REQUEST.getCode()));
@@ -36,7 +37,7 @@ public class HelloAPIController extends BaseController{
 		}
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			String jsonString = HttpClient.sendGET("http://172.22.0.222:5000");
+			String jsonString = HttpClient.sendGET("http://172.22.0.222:5000").getData();
 			HashMap<String, String> decodedJson = new HashMap<String, String>();
 			decodedJson = mapper.readValue(jsonString, new TypeReference<HashMap<String, String>>(){});
 			AppState.getInstance().incrementCount();
