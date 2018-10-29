@@ -23,6 +23,7 @@ public class HttpClient {
 		con.setRequestMethod("GET");
 		con.setRequestProperty("User-Agent", USER_AGENT);
 		con.setConnectTimeout(1000);
+		con.setReadTimeout(1000);
 
 		int responseCode = con.getResponseCode();
 
@@ -50,6 +51,7 @@ public class HttpClient {
 		con.setRequestProperty("User-Agent", USER_AGENT);
 		con.setRequestProperty("Content-Length", Integer.toString(dataBytes.length));
 		con.setConnectTimeout(1000);
+		con.setReadTimeout(1000);
 		con.setDoOutput(true);
 
 
