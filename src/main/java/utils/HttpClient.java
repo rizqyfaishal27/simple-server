@@ -48,6 +48,7 @@ public class HttpClient {
 		con.setRequestProperty("Content-Type", contentType);
 		con.setRequestProperty("User-Agent", USER_AGENT);
 		con.setRequestProperty("Content-Length", Integer.toString(dataBytes.length));
+		con.setDoOutput(true);
 
 
 		try( DataOutputStream wr = new DataOutputStream( con.getOutputStream())) {
