@@ -19,6 +19,7 @@ import response.Response;
 import response.JsonResponse;
 
 import httpstatus.HttpStatusCode;
+import logger.Logger;
 
 public class CheckQuorumController extends BaseController {
 
@@ -36,6 +37,7 @@ public class CheckQuorumController extends BaseController {
                     new TypeReference<ArrayList<String>>(){});
                 int count = 0;
                 for(String host: hostLists) {
+                    Logger.outputMessage(host);
                     HashMap<String, String> hostDecoded = mapper.readValue(host, 
                         new TypeReference<HashMap<String, String>>() {});
                     HttpResponseClient pingResponse = HttpClient.sendPOST(hostDecoded.get("ip"), 
