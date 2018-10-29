@@ -38,7 +38,7 @@ public class CheckQuorumController extends BaseController {
                 int count = 0;
                 for(Host host: hostLists) {
                     Logger.outputMessage(host.getIp());
-                    HttpResponseClient pingResponse = HttpClient.sendPOST(host.getIp() + "/ewallet/ping", 
+                    HttpResponseClient pingResponse = HttpClient.sendPOST("http://" + host.getIp() + "/ewallet/ping", 
                         "application/json", "");
                     if(pingResponse.getStatusCode() == 200) {
                         HashMap<String, Integer> pingResponseDecoded = mapper.readValue(pingResponse.getData(),
