@@ -5,17 +5,17 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 
-import server.HttpServer;
+import server.ThreadPoolServer;
 import request.Request;
 import webapp.controllers.BaseController;
 import webapp.controllers.StaticFileController;
 
 
 public class WebApp {
-	private HttpServer server;
+	private ThreadPoolServer server;
 	private Router router;
 
-	public WebApp(HttpServer server) throws IOException{
+	public WebApp(ThreadPoolServer server) throws IOException{
 		this.server = server;
 		configureRouter();
 		this.server.setWebApp(this);
@@ -40,7 +40,8 @@ public class WebApp {
 	}
 
 	public void bootingUpServer() {
-		this.server.run();
+		Thread serverThread = new Thread(this.server);
+		serverThread.run();
 	}
 
 }

@@ -23,12 +23,12 @@ import webapp.WebApp;
 import request.Request;
 
 
-public class ClientHandler implements Runnable {
+public class ClientHandlerWorker implements Runnable {
 
 	private Socket clientSocket;
 	private WebApp webApp;
 	
-	public ClientHandler(Socket clientSocket, WebApp webApp) {
+	public ClientHandlerWorker(Socket clientSocket, WebApp webApp) {
 		this.clientSocket = clientSocket;
 		this.webApp = webApp;
 	}

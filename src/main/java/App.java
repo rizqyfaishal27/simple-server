@@ -1,5 +1,5 @@
 import java.io.IOException;
-import server.HttpServer;
+import server.ThreadPoolServer;
 import utils.AppConfig;
 import webapp.WebApp;
 
@@ -11,8 +11,9 @@ public class App {
     public static void main(String[] args) throws IOException {
     	int port = args.length > 0 ? Integer.parseInt(args[0]) : AppConfig.DEFAULT_PORT;
     	String servedDirectory = args.length > 1 ? args[1] : AppConfig.DIRECTORY_ROOT;
+        int amountThread = args.length > 2 ? Integer.parseInt(args[2]) : AppConfig.AMOUNT_THREAD;
 
-        HttpServer server = new HttpServer(port);
+        ThreadPoolServer server = new ThreadPoolServer(port, amountThread);
         WebApp webApp = new WebApp(server);
         webApp.bootingUpServer();
     }

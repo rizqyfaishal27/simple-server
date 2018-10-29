@@ -10,6 +10,7 @@ import java.io.IOException;
 public class HttpClient {
 
 	private static final String USER_AGENT = "Curl";
+	
 	public static String sendGET(String url) throws IOException {
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
