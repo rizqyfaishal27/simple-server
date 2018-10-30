@@ -35,7 +35,7 @@ public class DBUtil {
         try {
             Statement statement = getConnection().createStatement();
             statement.setQueryTimeout(30);
-            statement.execute("create table if not exists users(user_id integer, name string, saldo integer);");
+            statement.execute("create table if not exists users(user_id integer not null unique, name string, saldo integer);");
         } catch(SQLException e) {
             e.printStackTrace();
         }
