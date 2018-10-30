@@ -44,6 +44,9 @@ public class RegisterController extends BaseController {
                 try {
                     String name = request.getBody().get("nama");
                     String userId = request.getBody().get("user_id");
+                    if (name == null || userId == null) {
+                        throw new Exception();
+                    }
                     Statement statement = DBUtil.getConnection().createStatement();
                     HttpResponseClient responseHostList = HttpClient.sendGET(AppConfig.LIST_HOSTS_URL);
                     ObjectMapper mapper = new ObjectMapper();
@@ -52,14 +55,15 @@ public class RegisterController extends BaseController {
                         if(host.getNpm().equals(userId)) {
                             if(host.getIp().equals(AppConfig.IP_ADDRESS)) {
                                 int res = statement
-                                    .executeUpdate("insert into users values(" + userId + "," + name + "," + 1000000000 + ")");
+                                    .executeUpdate("insert into users values(" + userId + ", '" + name + "'," + 1000000000 + ")");
                                 Logger.outputMessage(Integer.toString(res));
+                                Logger.outputMessage("insert into users values(" + userId + ", '" + name + "'," + 1000000000 + ")");
                                 if(res <= 0) {
                                     throw new SQLException();
                                 }
                             } else {
                                 int res = statement
-                                    .executeUpdate("insert into users values(" + userId + "," + name + "," + 0 + ")");
+                                    .executeUpdate("insert into users values(" + userId + ", '" + name + "'," + 0 + ")");
                                 if(res <= 0) {
                                     throw new SQLException();
                                 }
