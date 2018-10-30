@@ -43,11 +43,12 @@ public class CheckDatabaseController extends BaseController {
             ResultSet res = statement.executeQuery("select * from users;");
             String temp = "";
             while(res.next()) {
+                System.out.println("Yes");
                 int id = res.getInt("user_id");
                 String nama = res.getString("nama");
                 int saldo = res.getInt("saldo");
 
-                temp += (id + " " + nama + " " + saldo + "\r\n");
+                temp += (id + " " + nama + " " + saldo + "\n");
             }
             return new TextResponse(temp, HttpStatusCode.OK, request, responseStream);
         } catch(SQLException e) {

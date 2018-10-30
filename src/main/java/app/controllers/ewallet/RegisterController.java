@@ -29,6 +29,7 @@ import utils.DBUtil;
 import utils.HttpClient;
 import utils.HttpResponseClient;
 import httpstatus.HttpStatusCode;
+import logger.Logger;
 
 public class RegisterController extends BaseController {
 
@@ -52,6 +53,7 @@ public class RegisterController extends BaseController {
                             if(host.getIp().equals(AppConfig.IP_ADDRESS)) {
                                 int res = statement
                                     .executeUpdate("insert into users values(" + userId + "," + name + "," + 1000000000 + ")");
+                                Logger.outputMessage(Integer.toString(res));
                                 if(res <= 0) {
                                     throw new SQLException();
                                 }
@@ -68,6 +70,9 @@ public class RegisterController extends BaseController {
                     return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
                 } catch(SQLException e) {
                     data.put("registerReturn", -4);
+                    return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
+                } catch(Exception e) {
+                    data.put("registerReturn", -99);
                     return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
                 }
             } else {
