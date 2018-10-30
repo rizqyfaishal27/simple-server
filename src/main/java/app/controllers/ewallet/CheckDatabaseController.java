@@ -45,7 +45,7 @@ public class CheckDatabaseController extends BaseController {
             while(res.next()) {
                 System.out.println("Yes");
                 int id = res.getInt("user_id");
-                String nama = res.getString("nama");
+                String nama = res.getString("name");
                 int saldo = res.getInt("saldo");
 
                 temp += (id + " " + nama + " " + saldo + "\n");
