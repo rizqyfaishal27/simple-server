@@ -69,6 +69,7 @@ public class RegisterController extends BaseController {
                     data.put("registerReturn", 1);
                     return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
                 } catch(SQLException e) {
+                    e.printStackTrace();
                     data.put("registerReturn", -4);
                     return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
                 } catch(Exception e) {
