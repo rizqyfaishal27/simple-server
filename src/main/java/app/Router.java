@@ -27,7 +27,8 @@ import webapp.controllers.HelloAPIController;
 
 import webapp.controllers.ewallet.PingController;
 import webapp.controllers.ewallet.CheckQuorumController;
-// import webapp.controllers.ewallet.Registerontroller;
+import webapp.controllers.ewallet.CheckDatabaseController;
+import webapp.controllers.ewallet.RegisterController;
 // import webapp.controllers.ewallet.GetSaldoController;
 // import webapp.controllers.ewallet.GetTotalSaldoController;
 // import webapp.controllers.ewallet.TransferController;
@@ -95,7 +96,7 @@ public class Router {
 		router.register(Request.GET, "/api/spesifikasi.yaml", ApiSpesificationController.class.getName());
 		router.register(Request.GET, "/api/plus_one/<int:num>", PlusOneController.class.getName());
 		router.register(Request.GET, "/ewallet/check_quorum", CheckQuorumController.class.getName());
-
+		router.register(Request.GET, "/ewallet/check_database", CheckDatabaseController.class.getName());
 		
 		router.register(Request.POST, "/api/hello", HelloAPIController.class.getName());
 		router.register(Request.POST, "/hello-world", HelloWorldPostController.class.getName());
@@ -104,7 +105,7 @@ public class Router {
 		// router.register(Request.POST, "/getSaldo", GetSaldoController.class.getName());
 		// router.register(Request.POST, "/getTotalSaldo", GetTotalController.class.getName());
 		// router.register(Request.POST, "/transfer", TransferController.class.getName());
-		// router.register(Request.POST, "/ewallet/register", RegisterController.class.getName());
+		router.register(Request.POST, "/ewallet/register", RegisterController.class.getName());
 
 		return router;
 	}

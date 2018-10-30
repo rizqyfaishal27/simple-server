@@ -24,7 +24,7 @@ public class TextResponse extends Response {
 	public void sendResponse() throws IOException {
 		try {
 			byte[] returnedData = data.getBytes("UTF-8");
-			String header = HttpHeaderBuilder.generateHttpBadRequestHeader(request.getHttpVersion(),returnedData.length);
+			String header = HttpHeaderBuilder.generateHttpOkHeader(request.getHttpVersion(),returnedData.length, "text/plain");
 			responseStream.write(header.getBytes("UTF-8"));
 			responseStream.write(returnedData);
 			responseStream.write("\r\n".getBytes("UTF-8"));
