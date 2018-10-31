@@ -53,6 +53,7 @@ public class HttpClient {
 		con.setConnectTimeout(1000);
 		con.setReadTimeout(1000);
 		con.setDoOutput(true);
+		// con.setDoInput(true);
 
 
 		try( DataOutputStream wr = new DataOutputStream( con.getOutputStream())) {

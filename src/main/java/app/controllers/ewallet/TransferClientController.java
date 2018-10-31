@@ -58,7 +58,7 @@ public class TransferClientController extends BaseController {
                     HttpResponseClient transferResponse = HttpClient.sendPOST(
                         "http://" + cabangTarget + "/ewallet/transfer",
                         "application/json",
-                        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(dataToRequest)
+                        mapper.writeValueAsString(dataToRequest)
                     );
                     if(transferResponse.getStatusCode() == 200) {
                         HashMap<String, Object> responseData = mapper.readValue(transferResponse.getData(),
@@ -67,8 +67,8 @@ public class TransferClientController extends BaseController {
                         if((Integer) responseData.get("transferReturn") == 1) {
                             int newSaldo = saldo - nilaiInt;
                             String updateSql = "update users set saldo = '" + newSaldo + "' where user_id = '" + userId + "'";
-                            ResultSet resUpdate = statement.executeQuery(updateSql);
-                            if(resUpdate.rowUpdated()) {
+                            int resUpdate = statement.executeUpdate(updateSql);
+                            if(resUpdate >= 1) {
                                 data.put("transferReturn", 1);
                                 return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
                             }
@@ -84,6 +84,7 @@ public class TransferClientController extends BaseController {
                 throw new Exception("-2");
             }
         } catch(SQLException e) {
+            e.printStackTrace();
             data.put("transferReturn", -4);
             return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);            
         } catch(NumberFormatException e) {

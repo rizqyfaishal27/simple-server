@@ -40,7 +40,6 @@ public class RegisterController extends BaseController {
     public Response createResponse() {
         HashMap<String, Object> data = new HashMap<String, Object>();
         String env = System.getenv("JAVA_ENV");
-        System.out.println(env);
         try {
             if(env.equals("development") || QuorumUtil.checkQuorum(0.5)) {
                 try {
@@ -70,10 +69,11 @@ public class RegisterController extends BaseController {
                                     throw new SQLException();
                                 }
                             }
+                            data.put("registerReturn", 1);
+                            return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
                         }
                     }
-                    data.put("registerReturn", 1);
-                    return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
+                    throw new Exception("-99");
                 } catch(SQLException e) {
                     e.printStackTrace();
                     data.put("registerReturn", -4);

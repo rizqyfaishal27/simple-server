@@ -41,15 +41,15 @@ public class TransferController extends BaseController {
                 if(nilaiInt < 0 || nilaiInt > 1000000000) {
                     throw new Exception("-5");
                 }
-                String sql = "select * from users where user_id = `" + userId + "'";
+                String sql = "select * from users where user_id = '" + userId + "'";
                 Statement statement = DBUtil.getConnection().createStatement();
                 ResultSet res = statement.executeQuery(sql);
                 if(res.next()) {
                     int saldo = res.getInt("saldo");
                     int newSaldo = saldo + nilaiInt;
-                    String sqlUpdate = "update users set saldo = '" + newSaldo + "' where user_id = '" + userId + "'";
-                    ResultSet resUpdate = statement.executeQuery(sql);
-                    if(resUpdate.rowUpdated()) {
+                    String sqlUpdate = "update users set saldo = " + newSaldo + " where user_id = " + userId;
+                    int updatedRows = statement.executeUpdate(sqlUpdate);
+                    if(updatedRows >= 1) {
                         data.put("transferReturn", 1);
                         return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
                     } else {
@@ -63,9 +63,11 @@ public class TransferController extends BaseController {
                throw new Exception("-2");
             }
         } catch(SQLException e) {
+            e.printStackTrace();
             data.put("transferReturn", -4);
             return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);            
         } catch (Exception e) {
+            e.printStackTrace();    
             switch(e.getMessage()) {
                 case "-1":
                     data.put("transferReturn", -1);

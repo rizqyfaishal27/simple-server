@@ -27,17 +27,14 @@ public class GetSaldoController extends BaseController {
     public Response createResponse() {
         HashMap<String, Object> data = new HashMap<String, Object>();
         String env = System.getenv("JAVA_ENV");
-        System.out.println(env);
         try {
             if(env.equals("development") || QuorumUtil.checkQuorum(0.5)) {
-                System.out.println(request.getBody());
                 String userIdString = request.getBody().get("user_id");
                 if(userIdString == null) {
-                    throw new Exception();
+                    throw new Exception("-99");
                 }
                 int userId = Integer.parseInt(userIdString);
                 String sql = "select * from users where user_id = '" + userId + "'";
-                System.out.println(sql);
                 Statement statement = DBUtil.getConnection().createStatement();
                 ResultSet res = statement.executeQuery(sql);
                 if(res.next()) {

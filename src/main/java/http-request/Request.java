@@ -141,6 +141,7 @@ public class Request {
 			method = temp[0];
 			httpVersion = temp[2];
 
+
 			String[] urlSplitted = temp[1].split("\\?");
 			HashMap<String, String> queryParams = new HashMap<String, String>();
 			if(urlSplitted.length > 1) {
@@ -227,7 +228,6 @@ public class Request {
 						String headerBody = requestTextPerLine;
 						jsonString = headerBody;
 					}
-
 					try {
 						ObjectMapper mapper = new ObjectMapper();
 						HashMap<String, Object> map = new HashMap<String, Object>();
@@ -245,7 +245,6 @@ public class Request {
 			}
 			return new Request(url, originUrl, method, headers, body, queryParams, urlParams, httpVersion);
 		} catch(BadRequestException e) {
-			System.out.println(e.getMessage());
 			return new Request(BAD_REQUEST, e.getMessage(), 
 				originUrl, httpVersion, method);
 		} catch(NotImplementedException e) {

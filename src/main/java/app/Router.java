@@ -121,7 +121,7 @@ public class Router {
 		router.register(Request.POST, "/ewallet/getSaldo", GetSaldoController.class.getName());
 		router.register(Request.POST, "/ewallet/getTotalSaldo", GetTotalSaldoController.class.getName());
 		router.register(Request.POST, "/ewallet/transfer", TransferController.class.getName());
-		router.register(Request.POST, "/ewallet/transfer-client", TransferClientController.class.getName());
+		router.register(Request.POST, "/ewallet/transferClient", TransferClientController.class.getName());
 		router.register(Request.POST, "/ewallet/register", RegisterController.class.getName());
 
 		return router;

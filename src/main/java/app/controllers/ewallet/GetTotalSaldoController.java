@@ -34,7 +34,6 @@ public class GetTotalSaldoController extends BaseController {
     public Response createResponse() {
         HashMap<String, Object> data = new HashMap<String, Object>();
         String env = System.getenv("JAVA_ENV");
-        System.out.println(env);
         try {
             if(env.equals("development") || QuorumUtil.checkQuorum(1.0)) {
                 String userIdString = request.getBody().get("user_id");
@@ -54,10 +53,11 @@ public class GetTotalSaldoController extends BaseController {
                                 int notRegistered = 0;
                                 int totalSaldo = 0;
                                 for(Host hostJ: hosts) {
+                                    String dataReq = mapper.writeValueAsString(dataToRequest);
                                     HttpResponseClient requestSaldoResponse = HttpClient.sendPOST(
                                         "http://" + hostJ.getIp() + "/ewallet/getSaldo",
                                         "application/json",
-                                        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(dataToRequest)
+                                        dataReq
                                     );
                                     if(requestSaldoResponse.getStatusCode() == 200) {
                                         HashMap<String, Integer> totalSaldoMap = mapper.readValue(
@@ -87,7 +87,7 @@ public class GetTotalSaldoController extends BaseController {
                                 HttpResponseClient requestTotalSaldoResponse = HttpClient.sendPOST(
                                     "http://" + host.getIp() + "/ewallet/getTotalSaldo",
                                     "application/json",
-                                    mapper.writerWithDefaultPrettyPrinter().writeValueAsString(dataToRequest)
+                                    mapper.writeValueAsString(dataToRequest)
                                 );
                                 if(requestTotalSaldoResponse.getStatusCode() == 200) {
                                     HashMap<String, Integer> totalSaldoMap = mapper.readValue(

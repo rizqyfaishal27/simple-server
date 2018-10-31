@@ -17,6 +17,7 @@ public class DBUtil {
             Class.forName("org.sqlite.JDBC");
             String sqliteFile = AppConfig.SQLITE_FILE;
             Connection connection = DriverManager.getConnection("jdbc:sqlite:" + sqliteFile);
+            connection.setAutoCommit(true);
             return connection;
         } catch(SQLException e) {
             e.printStackTrace();
