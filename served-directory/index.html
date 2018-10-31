@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>E-Wallet</title>
+	<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div id="quorum-checking">
+        <span>Checking quorum....</span>
+    </div>
+	<div id="quorum-state">
+        <span id="quorum-state-active"></span> active of 
+        <span id="quorum-state-total"></span> --
+        <span id="quorum-state-percent"></span>%
+    </div>
+    <div class="container">
+        <h2>Welcome to ewallet</h2>
+        <h4>Kantor cabang: 172.22.0.208</h4>
+        <div class="content">
+            <div class="sidebar">
+                <ul>
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    <li>
+                        <a href="/register">Register</a>
+                    </li>
+                    <li>
+                        <a href="/get-saldo">Get Saldo</a>
+                    </li>
+                    <li>
+                        <a href="/get-total-saldo">Get Total Saldo</a>
+                    </li>
+                    <li>
+                        <a href="/transfer">Transfer</a>
+                    </li>   
+                </ul>
+            </div>
+            <div class="main-content">
+                <h3>Yeaay!</h3>
+                <p>Beberapa ketentuan mengenai transaksi yang dapat dilakukan</p>
+                <ul>
+                    <li>
+                        Transaksi dapat dilakukan atau tidak tergantung dari quorum. Status quorum dapat dilihat di pojok kiri bawah.
+                    </li>
+                    <li>
+                        Untuk register, getSaldo, dan transfer status quorum harus mencapi >= 50% dari total active node.
+                    </li>
+                    <li>
+                        Untuk getTotalSaldo. status quorum harus mencapi 100% atau semua kantor cabang harus dalam keaadaan aktif.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		setInterval(function() {
+            $.get("http://host1406622856.sisdis.infralabs.cs.ui.ac.id/ewallet/check_quorum")
+                .then(function(response, statusText) {
+                    if(response.total_count != undefined && statusText == 'success') {
+                        var data = response;
+                        $('#quorum-checking').css({ display: 'none' });
+                        $('#quorum-state-active').html(data.active_count);
+                        $('#quorum-state-total').html(data.total_count);
+                        $('#quorum-state-percent').html(Math.floor((data.active_count / data.total_count) * 100));
+                        $("#quorum-state").css({ display: 'block' });
+                    }
+                })
+        }, 3000);
+	</script>
+</body>
+</html>

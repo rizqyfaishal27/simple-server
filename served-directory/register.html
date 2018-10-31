@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>E-Wallet</title>
+	<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div id="quorum-checking">
+        <span>Checking quorum....</span>
+    </div>
+	<div id="quorum-state">
+        <span id="quorum-state-active"></span> active of 
+        <span id="quorum-state-total"></span> --
+        <span id="quorum-state-percent"></span>%
+    </div>
+    <div class="container">
+        <h2>Welcome to ewallet</h2>
+        <h4>Kantor cabang: 172.22.0.208</h4>
+        <div class="content">
+            <div class="sidebar">
+                <ul>
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    <li>
+                        <a href="/register">Register</a>
+                    </li>
+                    <li>
+                        <a href="/get-saldo">Get Saldo</a>
+                    </li>
+                    <li>
+                        <a href="/get-total-saldo">Get Total Saldo</a>
+                    </li>
+                    <li>
+                        <a href="/transfer">Transfer</a>
+                    </li>   
+                </ul>
+            </div>
+            <div class="main-content">
+                <h3>Register</h3>
+                <p>Mendaftarkan di kantor cabang ini</p>
+                <input type="text" id="npm" placeholder="Npm" />
+                <input type="text" id="nama" placeholder="Nama" />
+                <p>
+                    <button id="registerButton">
+                        register
+                    </button>
+                </p>
+                <div id="result"></div>
+            </div>
+        </div>
+    </div>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		setInterval(function() {
+            $.get("http://host1406622856.sisdis.infralabs.cs.ui.ac.id/ewallet/check_quorum")
+                .then(function(response, statusText) {
+                    if(response.total_count != undefined && statusText == 'success') {
+                        var data = response;
+                        $('#quorum-checking').css({ display: 'none' });
+                        $('#quorum-state-active').html(data.active_count);
+                        $('#quorum-state-total').html(data.total_count);
+                        $('#quorum-state-percent').html(Math.floor((data.active_count / data.total_count) * 100));
+                        $("#quorum-state").css({ display: 'block' });
+                    }
+                })
+        }, 3000);
+    </script>
+    <script type="text/javascript">
+        $('#registerButton').on('click', function() {
+            var user_id = $('#npm').val();
+            var nama = $('#nama').val();
+
+            $.post("http://host1406622856.sisdis.infralabs.cs.ui.ac.id/ewallet/register", {
+                nama: nama,
+                user_id: user_id
+            }).then(function(response) {
+                if(response.registerReturn == -2) {
+                    $('#result').html("Kondisi quorum belum terpenuhi").css({ display: 'block' });
+                } else if (response.registerReturn == -99) {
+                    $('#result').html("Terjadi error yang tidak diketahui").css({ display: 'block' });
+                } else if(response.registerReturn == 1) {
+                    $('#result').html("Registrasi berhasil").css({ display: 'block' });
+                } else if(response.registerReturn == -4) {
+                    $('#result').html("Terjadi error pada transaksi database").css({ display: 'block' });
+                }
+                $('#registerButton').attr("disabled", false);
+                $('#npm').attr("disabled", false);
+                $('#nama').attr("disabled", false);
+                $('#npm').val("");
+                $('#nama').val("");
+            })
+            .fail(function() {
+                $('#registerButton').attr("disabled", false);
+                $('#npm').attr("disabled", false);
+                $('#nama').attr("disabled", false);
+                $('#npm').val("");
+                $('#nama').val("");
+            })
+
+            $(this).attr("disabled", true);
+            $('#npm').attr("disabled", true);
+            $('#nama').attr("disabled", true);
+            $('#result').html("").css({ display: 'none' })
+        });
+    </script>
+    
+</body>
+</html>

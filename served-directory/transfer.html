@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>E-Wallet</title>
+	<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div id="quorum-checking">
+        <span>Checking quorum....</span>
+    </div>
+	<div id="quorum-state">
+        <span id="quorum-state-active"></span> active of 
+        <span id="quorum-state-total"></span> --
+        <span id="quorum-state-percent"></span>%
+    </div>
+    <div class="container">
+        <h2>Welcome to ewallet</h2>
+        <h4>Kantor cabang: 172.22.0.208</h4>
+        <div class="content">
+            <div class="sidebar">
+                <ul>
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    <li>
+                        <a href="/register">Register</a>
+                    </li>
+                    <li>
+                        <a href="/get-saldo">Get Saldo</a>
+                    </li>
+                    <li>
+                        <a href="/get-total-saldo">Get Total Saldo</a>
+                    </li>
+                    <li>
+                        <a href="/transfer">Transfer</a>
+                    </li>   
+                </ul>
+            </div>
+            <div class="main-content">
+                <h3>Transfer</h3>
+                <p>Transfer ke akun sama di kantor cabang lain.</p>
+
+                <p>
+                    <input id="npm" placeholder="user id atau npm" />
+                </p>
+                <p>
+                    <input id="nilai" placeholder="jumlah yang ditransfer" />
+                </p>
+                <p>
+                    <label for="cabang">Cabang: </label>
+                    <select id="cabang">
+                        <option value="">Loading</option>
+                    </select>
+                </p>
+                <p>
+                    <button id="transferButton">
+                        Transfer
+                    </button>
+                </p>
+                <div id="result"></div>
+            </div>
+        </div>
+    </div>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		setInterval(function() {
+            $.get("http://host1406622856.sisdis.infralabs.cs.ui.ac.id/ewallet/check_quorum")
+                .then(function(response, statusText) {
+                    if(response.total_count != undefined && statusText == 'success') {
+                        var data = response;
+                        $('#quorum-checking').css({ display: 'none' });
+                        $('#quorum-state-active').html(data.active_count);
+                        $('#quorum-state-total').html(data.total_count);
+                        $('#quorum-state-percent').html(Math.floor((data.active_count / data.total_count) * 100));
+                        $("#quorum-state").css({ display: 'block' });
+                    }
+                })
+        }, 5000);
+    </script>
+    <script>
+        var LIST_HOSTS = [
+            {
+                "ip": "172.22.0.206",
+                "npm": "1406572340"
+            },
+            {
+                "ip": "172.22.0.217",
+                "npm": "1506726946"
+            },
+            {
+                "ip": "172.22.0.221",
+                "npm": "1506757352"
+            },
+            {
+                "ip": "172.22.0.208",
+                "npm": "1406622856"
+            },
+            {
+                "ip": "172.22.0.215",
+                "npm": "1506722802"
+            },
+            {
+                "ip": "172.22.0.218",
+                "npm": "1506728453"
+            },
+            {
+                "ip": "172.22.0.212",
+                "npm": "1506689156"
+            },
+            {
+                "ip": "172.22.0.214",
+                "npm": "1506690630"
+            },
+            {
+                "ip": "172.22.0.210",
+                "npm": "1506688821"
+            },
+            {
+                "ip": "172.22.0.201",
+                "npm": "1306464404"
+            },
+            {
+                "ip": "172.22.0.213",
+                "npm": "1506690624"
+            },
+            {
+                "ip": "172.22.0.203",
+                "npm": "1406543896"
+            },
+            {
+                "ip": "172.22.0.219",
+                "npm": "1506731561"
+            },
+            {
+                "ip": "172.22.0.220",
+                "npm": "1506731694"
+            },
+            {
+                "ip": "172.22.0.209",
+                "npm": "1406623865"
+            },
+            {
+                "ip": "172.22.0.204",
+                "npm": "1406567196"
+            },
+            {
+                "ip": "172.22.0.205",
+                "npm": "1406571123"
+            },
+            {
+                "ip": "172.22.0.216",
+                "npm": "1506722853"
+            },
+            {
+                "ip": "172.22.0.211",
+                "npm": "1506689080"
+            },
+            {
+                "ip": "172.22.0.202",
+                "npm": "1406527545"
+            },
+            {
+                "ip": "172.22.0.207",
+                "npm": "1406578205"
+            }
+        ]
+        var options = "";
+        LIST_HOSTS.forEach(function(host) {
+            options += ('<option value="'+ host.ip +'">' + host.ip + '</option>');
+        })
+        $('#cabang').html(options);
+
+        $('#transferButton').on('click', function() {
+            var userId = $('#npm').val();
+            var nilai = $('#nilai').val();
+            var cabang = $('#cabang').val();
+
+            $.post('http://host1406622856.sisdis.infralabs.cs.ui.ac.id/ewallet/transfer-client', {
+                user_id: userId,
+                cabang: cabang,
+                nilai: nilai
+            })
+            .then(function(data) {
+                if(data.transferReturn == 1) {
+                    $('#result').html("Transfer berhasil").css({ display: 'block'});
+                } else if(data.transferReturn == -2) {
+                    $('#result').html("Kondisi quorum belum terpenuhi").css({ display: 'block'});
+                } else if(data.transferReturn == -1) {
+                    $('#result').html("Akun belum terdaftar").css({ display: 'block'});
+                } else if(data.transferReturn == -4) {
+                    $('#result').html("Terjadi kesalahan saat mengakses database").css({ display: 'block'});
+                } else if(data.transferReturn == -5) {
+                    $('#result').html("Nilai transfer tidak valid").css({ display: 'block'});
+                } else if(data.transferReturn == -99) {
+                    $('#result').html("Terjadi error yang tidak diketahui").css({ display: 'block'});
+                }
+
+                $('#npm').attr("disabled", false);
+                $('#nilai').attr("disabled", false);
+                $('#cabang').attr("disabled", false);
+                $('#transferButton').attr("disabled", false);
+
+                $('#npm').val("");
+                $('#nilai').val("");
+                $('#cabang').val("");
+            })
+            .fail(function() {
+                $('#npm').attr("disabled", false);
+                $('#nilai').attr("disabled", false);
+                $('#cabang').attr("disabled", false);
+                $('#transferButton').attr("disabled", false);
+            })
+
+            $('#npm').attr("disabled", true);
+            $('#nilai').attr("disabled", true);
+            $('#cabang').attr("disabled", true);
+            $(this).attr("disabled", true);
+            $('#result').html("").css({ display: 'none'});
+
+        })
+    </script>
+</body>
+</html>

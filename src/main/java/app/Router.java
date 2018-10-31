@@ -11,7 +11,7 @@ import java.lang.reflect.Constructor;
 
 import request.Request;
 import webapp.controllers.BaseController;
-import webapp.controllers.IndexPageController;
+// import webapp.controllers.IndexPageController;
 import webapp.controllers.StaticFileController;
 import webapp.controllers.HelloWorldController;
 import webapp.controllers.NotFoundController;
@@ -34,6 +34,11 @@ import webapp.controllers.ewallet.GetTotalSaldoController;
 import webapp.controllers.ewallet.TransferController;
 import webapp.controllers.ewallet.TransferClientController;
 
+import webapp.controllers.ewalletinterfaces.IndexPageController;
+import webapp.controllers.ewalletinterfaces.RegisterPageController;
+import webapp.controllers.ewalletinterfaces.TransferPageController;
+import webapp.controllers.ewalletinterfaces.GetSaldoPageController;
+import webapp.controllers.ewalletinterfaces.GetTotalSaldoPageController;
 
 
 import utils.AppConfig;
@@ -90,15 +95,22 @@ public class Router {
 	}
 
 	public static Router additionalConfig(Router router) {
+		// router.register(Request.GET, "/", IndexPageController.class.getName());
+		// router.register(Request.GET, "/hello-world", HelloWorldController.class.getName());
+		// router.register(Request.GET, "/background", BackgroundImageController.class.getName());
+		// router.register(Request.GET, "/style", StyleController.class.getName());
+		// router.register(Request.GET, "/info", InfoController.class.getName());
+		// router.register(Request.GET, "/api/spesifikasi.yaml", ApiSpesificationController.class.getName());
+		// router.register(Request.GET, "/api/plus_one/<int:num>", PlusOneController.class.getName());
 		router.register(Request.GET, "/", IndexPageController.class.getName());
-		router.register(Request.GET, "/hello-world", HelloWorldController.class.getName());
-		router.register(Request.GET, "/background", BackgroundImageController.class.getName());
-		router.register(Request.GET, "/style", StyleController.class.getName());
-		router.register(Request.GET, "/info", InfoController.class.getName());
-		router.register(Request.GET, "/api/spesifikasi.yaml", ApiSpesificationController.class.getName());
-		router.register(Request.GET, "/api/plus_one/<int:num>", PlusOneController.class.getName());
+		router.register(Request.GET, "/register", RegisterPageController.class.getName());
+		router.register(Request.GET, "/get-saldo", GetSaldoPageController.class.getName());
+		router.register(Request.GET, "/get-total-saldo", GetTotalSaldoPageController.class.getName());
+		router.register(Request.GET, "/transfer", TransferPageController.class.getName());
+
 		router.register(Request.GET, "/ewallet/check_quorum", CheckQuorumController.class.getName());
 		router.register(Request.GET, "/ewallet/check_database", CheckDatabaseController.class.getName());
+		
 		
 		router.register(Request.POST, "/api/hello", HelloAPIController.class.getName());
 		router.register(Request.POST, "/hello-world", HelloWorldPostController.class.getName());

@@ -1,6 +1,8 @@
-package webapp.controllers;
+package webapp.controllers.ewalletinterfaces;
 
 import java.io.BufferedOutputStream;
+
+import webapp.controllers.BaseController;
 
 import request.Request;
 import response.Response;
