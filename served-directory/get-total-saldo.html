@@ -50,7 +50,7 @@
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script type="text/javascript">
 		setInterval(function() {
-            $.get("http://host1406622856.sisdis.infralabs.cs.ui.ac.id/ewallet/check_quorum")
+            $.get("/ewallet/check_quorum")
                 .then(function(response, statusText) {
                     if(response.total_count != undefined && statusText == 'success') {
                         var data = response;
@@ -66,8 +66,14 @@
     <script type="text/javascript">
         $('#getTotalSaldoButton').on('click', function() {
             var userId = $('#npm').val();
-            $.post("http://host1406622856.sisdis.infralabs.cs.ui.ac.id/ewallet/getTotalSaldo", {
-                user_id: userId
+            $.ajax({
+                url: "/ewallet/getTotalSaldo",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    user_id: userId
+                })
             })
             .then(function(data) {
                 console.log(data.saldo);

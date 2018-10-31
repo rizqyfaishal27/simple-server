@@ -39,89 +39,73 @@ public class GetTotalSaldoController extends BaseController {
             if(env.equals("development") || QuorumUtil.checkQuorum(1.0)) {
                 String userIdString = request.getBody().get("user_id");
                 if(userIdString == null) {
-                    throw new Exception();
-                }
-                int userId = Integer.parseInt(userIdString);
-                String sql = "select * from users where user_id = '" + userId + "'";
-                System.out.println(sql);
-                Statement statement = DBUtil.getConnection().createStatement();
-                ResultSet res = statement.executeQuery(sql);
-                if(res.next()) {
-                    HttpResponseClient listHostResponse = HttpClient.sendGET(AppConfig.LIST_HOSTS_URL);
-                    if(listHostResponse.getStatusCode() == 200) {
-                        ObjectMapper mapper = new ObjectMapper();
-                        int notRegistered = 0;
-                        int totalSaldo = 0;
-                        Host[] hosts = mapper.readValue(listHostResponse.getData(), Host[].class);
-                        HashMap<String, String> dataToRequest = new HashMap<String, String>();
-
-                        dataToRequest.put("user_id", userIdString);
-                        for (Host host: hosts) {
-                            HttpResponseClient requestTotalSaldoResponse = HttpClient.sendPOST(
-                                "http://" + host.getIp() + "/ewallet/getSaldo",
-                                "application/json",
-                                mapper.writerWithDefaultPrettyPrinter().writeValueAsString(dataToRequest)
-                            );
-                            if(requestTotalSaldoResponse.getStatusCode() == 200) {
-                                HashMap<String, Integer> totalSaldoMap = mapper.readValue(
-                                    requestTotalSaldoResponse.getData(),
-                                    new TypeReference<HashMap<String, Integer>>() {}    
-                                );
-                                int saldo = totalSaldoMap.get("saldo");
-                                if(saldo == -1) {
-                                    notRegistered++;
-                                } else if(saldo >= 0) {
-                                    totalSaldo += saldo;
+                    throw new Exception("-99");
+                }                
+                HttpResponseClient listHostResponse = HttpClient.sendGET(AppConfig.LIST_HOSTS_URL);
+                if(listHostResponse.getStatusCode() == 200) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    Host[] hosts = mapper.readValue(listHostResponse.getData(), Host[].class);
+                    HashMap<String, String> dataToRequest = new HashMap<String, String>();
+                    dataToRequest.put("user_id", userIdString);
+                    for (Host host: hosts) {
+                       
+                        if(host.getNpm().equals(userIdString)) {
+                            if(host.getIp().equals(AppConfig.IP_ADDRESS)) {
+                                int notRegistered = 0;
+                                int totalSaldo = 0;
+                                for(Host hostJ: hosts) {
+                                    HttpResponseClient requestSaldoResponse = HttpClient.sendPOST(
+                                        "http://" + hostJ.getIp() + "/ewallet/getSaldo",
+                                        "application/json",
+                                        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(dataToRequest)
+                                    );
+                                    if(requestSaldoResponse.getStatusCode() == 200) {
+                                        HashMap<String, Integer> totalSaldoMap = mapper.readValue(
+                                            requestSaldoResponse.getData(),
+                                            new TypeReference<HashMap<String, Integer>>() {}    
+                                        );
+                                        int saldo = totalSaldoMap.get("saldo");
+                                        if(saldo == -1) {
+                                            notRegistered++;
+                                        } else if(saldo >= 0) {
+                                            totalSaldo += saldo;
+                                        } else {
+                                            throw new Exception("-3");
+                                        }
+                                    } else {
+                                        throw new Exception("-3");
+                                    }
+                                }
+                                if(notRegistered == hosts.length) {
+                                    data.put("saldo", -1);
+                                    return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
                                 } else {
-                                    throw new Exception("-3");
+                                    data.put("saldo", totalSaldo);
+                                    return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
                                 }
                             } else {
-                                throw new Exception("-3");
-                            }
-                        }
-                        if(notRegistered == hosts.length) {
-                            data.put("saldo", -1);
-                            return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
-                        } else {
-                            data.put("saldo", totalSaldo);
-                            return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
-                        }
-                    } else {
-                        throw new Exception("-99");
-                    }
-                } else {
-                    HttpResponseClient listHostResponse = HttpClient.sendGET(AppConfig.LIST_HOSTS_URL);
-                    if(listHostResponse.getStatusCode() == 200) {
-                        ObjectMapper mapper = new ObjectMapper();
-                        Host[] hosts = mapper.readValue(listHostResponse.getData(), Host[].class);
-                        HashMap<String, String> dataToRequest = new HashMap<String, String>();
-
-                        dataToRequest.put("user_id", userIdString);
-
-                        for (Host host: hosts) {
-                            if(host.getNpm().equals(userIdString)) {
-                                HttpResponseClient totalSaldoResponse = HttpClient.sendPOST(
+                                HttpResponseClient requestTotalSaldoResponse = HttpClient.sendPOST(
                                     "http://" + host.getIp() + "/ewallet/getTotalSaldo",
                                     "application/json",
                                     mapper.writerWithDefaultPrettyPrinter().writeValueAsString(dataToRequest)
                                 );
-                                if(totalSaldoResponse.getStatusCode() == 200) {
-                                    HashMap<String, Object> totalSaldoMap = mapper.readValue(
-                                        totalSaldoResponse.getData(),
+                                if(requestTotalSaldoResponse.getStatusCode() == 200) {
+                                    HashMap<String, Integer> totalSaldoMap = mapper.readValue(
+                                        requestTotalSaldoResponse.getData(),
                                         new TypeReference<HashMap<String, Integer>>() {}    
                                     );
-                                    return new JsonResponse(totalSaldoMap, HttpStatusCode.OK, request, responseStream);
+                                    int saldo = totalSaldoMap.get("saldo");
+                                    data.put("saldo", saldo);
+                                    return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
                                 } else {
                                     throw new Exception("-3");
                                 }
-                            }
+                            }   
                         }
-                        data.put("saldo", -1);
-                        return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
-                    } else {
-                        throw new Exception("-99");
                     }
+                    throw new Exception("-99");
                 }
+                throw new Exception("-99");
             } else {
                 data.put("saldo", -2);
                 return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);

@@ -1,3 +1,4 @@
+#!/bin/bash
 # Update repository 
 # Install jdk, curl, git
 apt-get update

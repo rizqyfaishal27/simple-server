@@ -48,4 +48,20 @@ run {
     if (project.hasProperty("dir")) {
         args Eval.me(dir);
     }
+
+    if (project.hasProperty("amountThread")) {
+        args Eval.me(amountThread);
+    }
+
+    if (project.hasProperty("sqliteFile")) {
+        args Eval.me(sqliteFile);
+    }
+
+    if (project.hasProperty("ipAddress")) {
+        args Eval.me(ipAddress);
+    }
+
+    if (project.hasProperty("listHostUrl")) {
+        args Eval.me(listHostUrl);
+    }
 }

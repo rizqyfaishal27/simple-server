@@ -64,7 +64,7 @@
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script type="text/javascript">
 		setInterval(function() {
-            $.get("http://host1406622856.sisdis.infralabs.cs.ui.ac.id/ewallet/check_quorum")
+            $.get("/ewallet/check_quorum")
                 .then(function(response, statusText) {
                     if(response.total_count != undefined && statusText == 'success') {
                         var data = response;
@@ -175,10 +175,16 @@
             var nilai = $('#nilai').val();
             var cabang = $('#cabang').val();
 
-            $.post('http://host1406622856.sisdis.infralabs.cs.ui.ac.id/ewallet/transfer-client', {
-                user_id: userId,
-                cabang: cabang,
-                nilai: nilai
+            $.ajax({
+                url: "/ewallet/register",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    cabang: cabang,
+                    user_id: userId,
+                    nilai: nilai
+                })
             })
             .then(function(data) {
                 if(data.transferReturn == 1) {

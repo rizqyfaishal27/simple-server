@@ -40,6 +40,8 @@ import webapp.controllers.ewalletinterfaces.TransferPageController;
 import webapp.controllers.ewalletinterfaces.GetSaldoPageController;
 import webapp.controllers.ewalletinterfaces.GetTotalSaldoPageController;
 
+import webapp.controllers.test.ListHostController;
+
 
 import utils.AppConfig;
 
@@ -99,7 +101,7 @@ public class Router {
 		// router.register(Request.GET, "/hello-world", HelloWorldController.class.getName());
 		// router.register(Request.GET, "/background", BackgroundImageController.class.getName());
 		// router.register(Request.GET, "/style", StyleController.class.getName());
-		// router.register(Request.GET, "/info", InfoController.class.getName());
+		router.register(Request.GET, "/list.json", ListHostController.class.getName());
 		// router.register(Request.GET, "/api/spesifikasi.yaml", ApiSpesificationController.class.getName());
 		// router.register(Request.GET, "/api/plus_one/<int:num>", PlusOneController.class.getName());
 		router.register(Request.GET, "/", IndexPageController.class.getName());

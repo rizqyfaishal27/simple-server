@@ -71,9 +71,16 @@
             var user_id = $('#npm').val();
             var nama = $('#nama').val();
 
-            $.post("http://host1406622856.sisdis.infralabs.cs.ui.ac.id/ewallet/register", {
-                nama: nama,
-                user_id: user_id
+
+            $.ajax({
+                url: "/ewallet/register",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    nama: nama,
+                    user_id: user_id
+                })
             }).then(function(response) {
                 if(response.registerReturn == -2) {
                     $('#result').html("Kondisi quorum belum terpenuhi").css({ display: 'block' });

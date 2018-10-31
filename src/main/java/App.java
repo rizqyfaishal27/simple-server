@@ -15,6 +15,18 @@ public class App {
     	String servedDirectory = args.length > 1 ? args[1] : AppConfig.DIRECTORY_ROOT;
         int amountThread = args.length > 2 ? Integer.parseInt(args[2]) : AppConfig.AMOUNT_THREAD;
 
+        if(args.length > 3) {
+        	AppConfig.SQLITE_FILE = args[3];
+        }
+
+        if(args.length > 4) {
+        	AppConfig.IP_ADDRESS = args[4];
+        }
+
+        if(args.length > 5) {
+        	AppConfig.LIST_HOSTS_URL = args[5];
+        }
+
         DBUtil.setupDatabase();
         ThreadPoolServer server = new ThreadPoolServer(port, amountThread);
         WebApp webApp = new WebApp(server);
