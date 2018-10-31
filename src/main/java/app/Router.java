@@ -29,9 +29,11 @@ import webapp.controllers.ewallet.PingController;
 import webapp.controllers.ewallet.CheckQuorumController;
 import webapp.controllers.ewallet.CheckDatabaseController;
 import webapp.controllers.ewallet.RegisterController;
-// import webapp.controllers.ewallet.GetSaldoController;
-// import webapp.controllers.ewallet.GetTotalSaldoController;
-// import webapp.controllers.ewallet.TransferController;
+import webapp.controllers.ewallet.GetSaldoController;
+import webapp.controllers.ewallet.GetTotalSaldoController;
+import webapp.controllers.ewallet.TransferController;
+import webapp.controllers.ewallet.TransferClientController;
+
 
 
 import utils.AppConfig;
@@ -102,9 +104,10 @@ public class Router {
 		router.register(Request.POST, "/hello-world", HelloWorldPostController.class.getName());
 		router.register(Request.POST, "/ewallet/ping", PingController.class.getName());
 
-		// router.register(Request.POST, "/getSaldo", GetSaldoController.class.getName());
-		// router.register(Request.POST, "/getTotalSaldo", GetTotalController.class.getName());
-		// router.register(Request.POST, "/transfer", TransferController.class.getName());
+		router.register(Request.POST, "/ewallet/getSaldo", GetSaldoController.class.getName());
+		router.register(Request.POST, "/ewallet/getTotalSaldo", GetTotalSaldoController.class.getName());
+		router.register(Request.POST, "/ewallet/transfer", TransferController.class.getName());
+		router.register(Request.POST, "/ewallet/transfer-client", TransferClientController.class.getName());
 		router.register(Request.POST, "/ewallet/register", RegisterController.class.getName());
 
 		return router;

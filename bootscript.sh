@@ -16,6 +16,7 @@ cd /opt/gradle
 wget https://services.gradle.org/distributions/gradle-4.10.2-all.zip
 unzip -q /opt/gradle/gradle-4.10.2-all.zip
 export PATH=$PATH:/opt/gradle/gradle-4.10.2/bin
+export JAVA_ENV=production
 echo $PATH
 
 # Cloning Project Repository

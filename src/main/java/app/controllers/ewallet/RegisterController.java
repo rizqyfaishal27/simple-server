@@ -39,8 +39,10 @@ public class RegisterController extends BaseController {
 
     public Response createResponse() {
         HashMap<String, Object> data = new HashMap<String, Object>();
+        String env = System.getenv("JAVA_ENV");
+        System.out.println(env);
         try {
-            if(QuorumUtil.checkQuorum(0)) {
+            if(env.equals("development") || QuorumUtil.checkQuorum(0.5)) {
                 try {
                     String name = request.getBody().get("nama");
                     String userId = request.getBody().get("user_id");
@@ -77,6 +79,7 @@ public class RegisterController extends BaseController {
                     data.put("registerReturn", -4);
                     return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
                 } catch(Exception e) {
+                    e.printStackTrace();
                     data.put("registerReturn", -99);
                     return new JsonResponse(data, HttpStatusCode.OK, request, responseStream);
                 }

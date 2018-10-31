@@ -240,11 +240,6 @@ public class Request {
 						e.printStackTrace();
 					}
 				} else {
-					int length = Integer.parseInt(headers.get("CONTENT-LENGTH"));
-					requestByte = ReadLineHelper.readLine(requestInputStream, length);
-					if(requestByte.length > 0) {
-						throw new BadRequestException(BAD_REQUEST);
-					}
 					body = new HashMap<String, String>();
 				}
 			}
