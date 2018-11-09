@@ -59,6 +59,7 @@ public class GetTotalSaldoController extends BaseController {
                                         "application/json",
                                         dataReq
                                     );
+									System.out.println(hostJ.getIp() + " " + requestSaldoResponse.getStatusCode());
                                     if(requestSaldoResponse.getStatusCode() == 200) {
                                         HashMap<String, Integer> totalSaldoMap = mapper.readValue(
                                             requestSaldoResponse.getData(),
