@@ -9,6 +9,6 @@ public class AppConfig {
 	public static final int AMOUNT_THREAD = 30;
 	public static String IP_ADDRESS = "172.22.0.208";
 	public static String SQLITE_FILE = "/root/db.sqlite";
-	public static String LIST_HOSTS_URL = "http://172.22.0.222/lapors/list.php";
+	public static String LIST_HOSTS_URL = "http://172.22.0.215/ewallet/list";
 
 }

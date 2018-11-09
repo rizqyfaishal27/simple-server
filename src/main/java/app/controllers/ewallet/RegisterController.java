@@ -56,9 +56,9 @@ public class RegisterController extends BaseController {
                         if(host.getNpm().equals(userId)) {
                             if(host.getIp().equals(AppConfig.IP_ADDRESS)) {
                                 int res = statement
-                                    .executeUpdate("insert into users values(" + userId + ", '" + name + "'," + 1000000000 + ")");
+                                    .executeUpdate("insert into users values(" + userId + ", '" + name + "'," + 200000 + ")");
                                 Logger.outputMessage(Integer.toString(res));
-                                Logger.outputMessage("insert into users values(" + userId + ", '" + name + "'," + 1000000000 + ")");
+                                Logger.outputMessage("insert into users values(" + userId + ", '" + name + "'," + 200000 + ")");
                                 if(res <= 0) {
                                     throw new SQLException();
                                 }
