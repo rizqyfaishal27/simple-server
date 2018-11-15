@@ -27,11 +27,11 @@ public class HttpClient {
 
 		int responseCode = con.getResponseCode();
 
-		BufferedReader in = new BufferedReader(
-		        new InputStreamReader(con.getInputStream()));
+		
 		String inputLine;
 		StringBuffer response = new StringBuffer();
-
+		BufferedReader in = new BufferedReader(
+		        new InputStreamReader(con.getInputStream()));
 		while ((inputLine = in.readLine()) != null) {
 			response.append(inputLine);
 		}
@@ -63,17 +63,20 @@ public class HttpClient {
 		}
 
 		int responseCode = con.getResponseCode();
-		BufferedReader in = new BufferedReader(
-		        new InputStreamReader(con.getInputStream()));
 		String inputLine;
 		StringBuffer response = new StringBuffer();
-
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
+		try {
+			BufferedReader in = new BufferedReader(
+		        new InputStreamReader(con.getInputStream()));
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+			return new HttpResponseClient(responseCode, response.toString());
+		} catch(IOException e) {
+			return new HttpResponseClient(responseCode, "");
 		}
-		in.close();
 
-		return new HttpResponseClient(responseCode, response.toString());
 	}
 
 	public static CompletableFuture<HttpResponseClient> sendGETAsync(String url) throws IOException {
